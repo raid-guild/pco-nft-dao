@@ -57,7 +57,7 @@ module.exports = {
         "jsx-a11y/img-redundant-alt": envRule,
         "simple-import-sort/imports": envRule,
         "simple-import-sort/exports": envRule,
-        "no-console": envRule,
+        // "no-console": envRule,
         "prettier/prettier": [
           envRule,
           {

@@ -1,1 +1,1 @@
-declare module '@my-app/contracts'
+declare module "@my-app/contracts";

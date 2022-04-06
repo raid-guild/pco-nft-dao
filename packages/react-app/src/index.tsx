@@ -14,7 +14,7 @@ const config = {
   readOnlyUrls: {
     [Mainnet.chainId]: "https://mainnet.infura.io/v3/" + INFURA_PROJECT_ID,
   },
-}
+};
 
 // You should replace this url with your own and put it into a .env file
 // See all subgraphs: https://thegraph.com/explorer/

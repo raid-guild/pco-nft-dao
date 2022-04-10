@@ -1,5 +1,11 @@
+import BoardModal from "components/BoardModal";
 import StatDisplay from "components/StatDisplay";
+import background from "images/boardBackground.svg";
+import { useState } from "react";
 import styled from "styled-components";
+
+import { gridSectionColor } from "./helpers";
+import { BoardSection as BoardSectionType, SectionStatus } from "./types";
 
 const DUMMY_STATS = [
   { label: "Land Purchased", value: "540 of 900" },
@@ -12,20 +18,36 @@ const DUMMY_STATS = [
   { label: "Tax Rate", value: "3%" },
 ];
 
-const BoardSection = styled.div`
-background: 
-  height: 24px;
-  width: 24px;
+type GameSectionProps = {
+  color: string;
+  selected: boolean;
+};
+
+const BoardRow = styled.div`
+  display: flex;
+`;
+
+const BoardSection = styled.div<GameSectionProps>`
+  background-color: ${({ color }) => color};
+  cursor: pointer;
+  height: 40px;
+  opacity: ${({ selected }) => (selected ? 0 : 0.6)};
+  transition: opacity 0.3s;
+  width: 40px;
+  &:hover {
+    opacity: 0;
+  }
 `;
 
 const GameBoard = styled.div`
+  background-image: url(${background});
   height: 960px;
+  position: relative;
   width: 960px;
 `;
 
 const GameContainer = styled.div`
   display: flex;
-  justify-content: space-between;
 `;
 
 const StatBar = styled.div`
@@ -39,9 +61,48 @@ const StatBar = styled.div`
 `;
 
 export default function Game(): JSX.Element {
+  const [selectedSection, setSelectedSection] =
+    useState<BoardSectionType | null>(null);
+
+  const handleSectionInteraction = async () => {
+    if (!selectedSection) return;
+    switch (selectedSection.status) {
+      default:
+        // Discover
+        console.log("DISCOVER");
+        break;
+    }
+  };
+
+  const handleSectionSelect = (pos: number) => {
+    setSelectedSection({ id: pos, status: SectionStatus.Undiscoverd });
+  };
+
   return (
     <GameContainer>
-      <GameBoard></GameBoard>
+      <GameBoard>
+        {new Array(24).fill(0).map((_, rowIndex) => (
+          <BoardRow key={rowIndex}>
+            {new Array(24).fill(0).map((_, colIndex) => {
+              return (
+                <BoardSection
+                  // TODO: Get section status from subgraph
+                  color={gridSectionColor("undiscovered" as SectionStatus)}
+                  key={colIndex}
+                  onClick={() => handleSectionSelect(rowIndex * 24 + colIndex)}
+                  selected={rowIndex * 24 + colIndex === selectedSection?.id}
+                />
+              );
+            })}
+          </BoardRow>
+        ))}
+        <BoardModal
+          onClose={() => setSelectedSection(null)}
+          onSectionInteraction={() => handleSectionInteraction()}
+          open={!!selectedSection}
+          sectionData={selectedSection ?? ({} as BoardSectionType)}
+        />
+      </GameBoard>
       <StatBar>
         {DUMMY_STATS.map(stat => (
           <StatDisplay key={stat.label} label={stat.label} value={stat.value} />

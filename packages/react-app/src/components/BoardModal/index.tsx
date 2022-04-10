@@ -16,10 +16,12 @@ type BoardModalProps = {
 const ActionContainer = styled.div`
   display: flex;
   gap: 81px;
+  margin-top: 76px;
 `;
 
 const Content = styled.div`
   display: flex;
+  height: 150px;
 `;
 
 const Close = styled.img`
@@ -57,7 +59,6 @@ export default function BoardModal({
   open,
   sectionData,
 }: BoardModalProps): JSX.Element {
-  console.log("SECTION DATA: ", sectionData);
   if (!open) return <></>;
   return (
     <ModalBody>

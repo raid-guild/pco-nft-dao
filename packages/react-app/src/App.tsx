@@ -1,19 +1,19 @@
 import { useQuery } from "@apollo/client";
 import { Contract } from "@ethersproject/contracts";
+import { abis, addresses } from "@my-app/contracts";
 import {
-  shortenAddress,
+  // shortenAddress,
   useCall,
-  useEthers,
-  useLookupAddress,
+  // useEthers,
+  // useLookupAddress,
 } from "@usedapp/core";
-import React, { useEffect, useState } from "react";
+// import React, { useEffect, useState } from "react";
+import { useEffect } from "react";
+import Game from "views/Game";
 
 // import { Body, Button, Container, Header, Image, Link } from "./components";
-import logo from "./ethereumLogo.png";
-
-import { addresses, abis } from "@my-app/contracts";
+// import logo from "./ethereumLogo.png";
 import GET_TRANSFERS from "./graphql/subgraph";
-import Game from "views/Game";
 
 // function WalletButton() {
 //   const [rendered, setRendered] = useState("");
@@ -55,6 +55,7 @@ import Game from "views/Game";
 
 function App(): JSX.Element {
   // Read more about useDapp on https://usedapp.io/
+  // eslint-disable-next-line
   const { error: contractCallError, value: tokenBalance } =
     useCall({
       contract: new Contract(addresses.ceaErc20, abis.erc20),
@@ -77,25 +78,7 @@ function App(): JSX.Element {
     }
   }, [loading, subgraphQueryError, data]);
 
-  return (
-    <Game />
-    // <Container>
-    //   <Header>
-    //     <WalletButton />
-    //   </Header>
-    //   <Body>
-    //     <Image src={logo} alt="ethereum-logo" />
-    //     <p>
-    //       Edit <code>packages/react-app/src/App.js</code> and save to reload.
-    //     </p>
-    //     <Link href="https://reactjs.org">
-    //       Learn React
-    //     </Link>
-    //     <Link href="https://usedapp.io/">Learn useDapp</Link>
-    //     <Link href="https://thegraph.com/docs/quick-start">Learn The Graph</Link>
-    //   </Body>
-    // </Container>
-  );
+  return <Game />;
 }
 
 export default App;

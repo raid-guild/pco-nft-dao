@@ -1,6 +1,5 @@
 import { useQuery } from "@apollo/client";
 import { Contract } from "@ethersproject/contracts";
-import { abis, addresses } from "@my-app/contracts";
 import {
   shortenAddress,
   useCall,
@@ -9,51 +8,53 @@ import {
 } from "@usedapp/core";
 import React, { useEffect, useState } from "react";
 
-import { Body, Button, Container, Header, Image, Link } from "./components";
+// import { Body, Button, Container, Header, Image, Link } from "./components";
 import logo from "./ethereumLogo.png";
+
+import { addresses, abis } from "@my-app/contracts";
 import GET_TRANSFERS from "./graphql/subgraph";
+import Game from "views/Game";
 
-function WalletButton() {
-  const [rendered, setRendered] = useState("");
+// function WalletButton() {
+//   const [rendered, setRendered] = useState("");
 
-  const ens = useLookupAddress();
-  const { account, activateBrowserWallet, deactivate, error } = useEthers();
+//   const ens = useLookupAddress();
+//   const { account, activateBrowserWallet, deactivate, error } = useEthers();
 
-  useEffect(() => {
-    if (ens) {
-      setRendered(ens);
-    } else if (account) {
-      setRendered(shortenAddress(account));
-    } else {
-      setRendered("");
-    }
-  }, [account, ens, setRendered]);
+//   useEffect(() => {
+//     if (ens) {
+//       setRendered(ens);
+//     } else if (account) {
+//       setRendered(shortenAddress(account));
+//     } else {
+//       setRendered("");
+//     }
+//   }, [account, ens, setRendered]);
 
-  useEffect(() => {
-    if (error) {
-      console.error("Error while connecting wallet:", error.message);
-    }
-  }, [error]);
+//   useEffect(() => {
+//     if (error) {
+//       console.error("Error while connecting wallet:", error.message);
+//     }
+//   }, [error]);
 
-  return (
-    <Button
-      onClick={() => {
-        if (!account) {
-          activateBrowserWallet();
-        } else {
-          deactivate();
-        }
-      }}
-    >
-      {rendered === "" && "Connect Wallet"}
-      {rendered !== "" && rendered}
-    </Button>
-  );
-}
+//   return (
+//     <Button
+//       onClick={() => {
+//         if (!account) {
+//           activateBrowserWallet();
+//         } else {
+//           deactivate();
+//         }
+//       }}
+//     >
+//       {rendered === "" && "Connect Wallet"}
+//       {rendered !== "" && rendered}
+//     </Button>
+//   );
+// }
 
 function App(): JSX.Element {
   // Read more about useDapp on https://usedapp.io/
-  // eslint-disable-next-line
   const { error: contractCallError, value: tokenBalance } =
     useCall({
       contract: new Contract(addresses.ceaErc20, abis.erc20),
@@ -77,22 +78,23 @@ function App(): JSX.Element {
   }, [loading, subgraphQueryError, data]);
 
   return (
-    <Container>
-      <Header>
-        <WalletButton />
-      </Header>
-      <Body>
-        <Image src={logo} alt="ethereum-logo" />
-        <p>
-          Edit <code>packages/react-app/src/App.js</code> and save to reload.
-        </p>
-        <Link href="https://reactjs.org">Learn React</Link>
-        <Link href="https://usedapp.io/">Learn useDapp</Link>
-        <Link href="https://thegraph.com/docs/quick-start">
-          Learn The Graph
-        </Link>
-      </Body>
-    </Container>
+    <Game />
+    // <Container>
+    //   <Header>
+    //     <WalletButton />
+    //   </Header>
+    //   <Body>
+    //     <Image src={logo} alt="ethereum-logo" />
+    //     <p>
+    //       Edit <code>packages/react-app/src/App.js</code> and save to reload.
+    //     </p>
+    //     <Link href="https://reactjs.org">
+    //       Learn React
+    //     </Link>
+    //     <Link href="https://usedapp.io/">Learn useDapp</Link>
+    //     <Link href="https://thegraph.com/docs/quick-start">Learn The Graph</Link>
+    //   </Body>
+    // </Container>
   );
 }
 

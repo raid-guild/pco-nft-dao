@@ -120,7 +120,6 @@ export const WalletProvider: React.FC<{
         typeof provider.chainId === "number"
           ? numberToHex(provider.chainId)
           : provider.chainId;
-
       if (!networks[chainId]) {
         if (!defaultChainId) {
           handleModalEvents &&
@@ -202,11 +201,7 @@ export const WalletProvider: React.FC<{
         (await window.ethereum?._metamask?.isUnlocked?.()) ?? false;
       const modal = getModal();
       const _isGnosisSafe = await modal.isSafeApp();
-
-      if (
-        isMetamaskUnlocked &&
-        (_isGnosisSafe || web3modalOptions.cacheProvider)
-      ) {
+      if (isMetamaskUnlocked && (_isGnosisSafe || modal.cachedProvider)) {
         await connectWallet();
       } else {
         setConnecting(false);

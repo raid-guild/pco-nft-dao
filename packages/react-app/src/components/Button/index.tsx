@@ -1,6 +1,6 @@
 import { useWallet } from "contexts/WalletContext";
 import toast from "react-hot-toast";
-import styled from "styled-components";
+import styled, { CSSProperties } from "styled-components";
 
 import buttonIcon from "./images/buttonIcon.svg";
 
@@ -19,19 +19,23 @@ const Container = styled.button`
 
 type ButtonProps = {
   hideIcon?: boolean;
+  loginButton?: boolean;
   onChange: () => void;
+  style?: CSSProperties;
   text: string;
 };
 
 export default function Button({
   hideIcon,
+  loginButton,
   onChange,
+  style,
   text,
 }: ButtonProps): JSX.Element {
   const { isConnected } = useWallet();
 
   const handleChange = () => {
-    if (isConnected) {
+    if (isConnected || loginButton) {
       onChange();
     } else {
       toast.error("Wallet not conneced.", { position: "top-left" });
@@ -39,7 +43,7 @@ export default function Button({
   };
 
   return (
-    <Container onClick={() => handleChange()}>
+    <Container onClick={() => handleChange()} style={{ ...style }}>
       {!hideIcon && <img alt="Atom" src={buttonIcon} />}
       <div>{text}</div>
     </Container>

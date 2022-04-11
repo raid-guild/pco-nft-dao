@@ -29,7 +29,10 @@ ReactDOM.render(
   <React.StrictMode>
     <DAppProvider config={config}>
       <ApolloProvider client={client}>
-        <WalletProvider networks={NETWORKS} web3modalOptions={{}}>
+        <WalletProvider
+          networks={NETWORKS}
+          web3modalOptions={{ cacheProvider: true, theme: "dark" }}
+        >
           <App />
         </WalletProvider>
       </ApolloProvider>

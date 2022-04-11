@@ -1,8 +1,11 @@
 import BoardModal from "components/BoardModal";
+import Button from "components/Button";
 import StatDisplay from "components/StatDisplay";
+import { useWallet } from "contexts/WalletContext";
 import background from "images/boardBackground.svg";
 import { useState } from "react";
 import styled from "styled-components";
+import { truncateAddress } from "utils";
 
 import { gridSectionColor } from "./helpers";
 import { BoardSection as BoardSectionType, SectionStatus } from "./types";
@@ -22,6 +25,13 @@ type GameSectionProps = {
   color: string;
   selected: boolean;
 };
+
+const Address = styled.div`
+  font-size: 16px;
+  font-weight: 500;
+  margin-top: 16px;
+  text-align: center;
+`;
 
 const BoardRow = styled.div`
   display: flex;
@@ -61,6 +71,8 @@ const StatBar = styled.div`
 `;
 
 export default function Game(): JSX.Element {
+  const { address, connectWallet, disconnect, isConnected, isConnecting } =
+    useWallet();
   const [selectedSection, setSelectedSection] =
     useState<BoardSectionType | null>(null);
 
@@ -107,6 +119,21 @@ export default function Game(): JSX.Element {
         {DUMMY_STATS.map(stat => (
           <StatDisplay key={stat.label} label={stat.label} value={stat.value} />
         ))}
+        <Button
+          loginButton
+          onChange={() =>
+            isConnected
+              ? disconnect()
+              : isConnecting
+              ? () => null
+              : connectWallet()
+          }
+          style={{ margin: "24px auto 0 auto", width: "fit-content" }}
+          text={
+            isConnected ? "Log Out" : isConnecting ? "Logging in..." : "Log In"
+          }
+        />
+        {address && <Address>Address: {truncateAddress(address)}</Address>}
       </StatBar>
     </GameContainer>
   );

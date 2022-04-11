@@ -2,8 +2,10 @@ import "./index.css";
 
 import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
 import { DAppProvider, Mainnet } from "@usedapp/core";
+import { WalletProvider } from "contexts/WalletContext";
 import React from "react";
 import ReactDOM from "react-dom";
+import { NETWORKS } from "web3/constants";
 
 import App from "./App";
 
@@ -27,7 +29,12 @@ ReactDOM.render(
   <React.StrictMode>
     <DAppProvider config={config}>
       <ApolloProvider client={client}>
-        <App />
+        <WalletProvider
+          networks={NETWORKS}
+          web3modalOptions={{ cacheProvider: true, theme: "dark" }}
+        >
+          <App />
+        </WalletProvider>
       </ApolloProvider>
     </DAppProvider>
   </React.StrictMode>,

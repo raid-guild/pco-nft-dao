@@ -7,51 +7,11 @@ import {
   // useEthers,
   // useLookupAddress,
 } from "@usedapp/core";
-// import React, { useEffect, useState } from "react";
 import { useEffect } from "react";
+import { Toaster } from "react-hot-toast";
 import Game from "views/Game";
 
-// import { Body, Button, Container, Header, Image, Link } from "./components";
-// import logo from "./ethereumLogo.png";
 import GET_TRANSFERS from "./graphql/subgraph";
-
-// function WalletButton() {
-//   const [rendered, setRendered] = useState("");
-
-//   const ens = useLookupAddress();
-//   const { account, activateBrowserWallet, deactivate, error } = useEthers();
-
-//   useEffect(() => {
-//     if (ens) {
-//       setRendered(ens);
-//     } else if (account) {
-//       setRendered(shortenAddress(account));
-//     } else {
-//       setRendered("");
-//     }
-//   }, [account, ens, setRendered]);
-
-//   useEffect(() => {
-//     if (error) {
-//       console.error("Error while connecting wallet:", error.message);
-//     }
-//   }, [error]);
-
-//   return (
-//     <Button
-//       onClick={() => {
-//         if (!account) {
-//           activateBrowserWallet();
-//         } else {
-//           deactivate();
-//         }
-//       }}
-//     >
-//       {rendered === "" && "Connect Wallet"}
-//       {rendered !== "" && rendered}
-//     </Button>
-//   );
-// }
 
 function App(): JSX.Element {
   // Read more about useDapp on https://usedapp.io/
@@ -78,7 +38,12 @@ function App(): JSX.Element {
     }
   }, [loading, subgraphQueryError, data]);
 
-  return <Game />;
+  return (
+    <>
+      <Toaster />
+      <Game />
+    </>
+  );
 }
 
 export default App;

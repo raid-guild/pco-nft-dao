@@ -1,7 +1,9 @@
+import { useQuery } from "@apollo/client";
 import BoardModal from "components/BoardModal";
 import Button from "components/Button";
 import StatDisplay from "components/StatDisplay";
 import { useWallet } from "contexts/WalletContext";
+import { Plots } from "graphql/queries";
 import background from "images/boardBackground.svg";
 import { useState } from "react";
 import styled from "styled-components";
@@ -82,6 +84,10 @@ export default function Game(): JSX.Element {
   } = useWallet();
   const [selectedSection, setSelectedSection] =
     useState<BoardSectionType | null>(null);
+
+  const { data: plotData, error, loading: loadingPlots } = useQuery(Plots);
+
+  console.log("PLOT DATA: ", plotData);
 
   const handleSectionInteraction = async () => {
     if (!address || !provider || !selectedSection) return;

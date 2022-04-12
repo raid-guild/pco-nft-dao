@@ -37,6 +37,26 @@ const Address = styled.div`
   text-align: center;
 `;
 
+const BoardOverlay = styled.div`
+  align-items: center;
+  background-color: #000000;
+  display: flex;
+  height: 100%;
+  justify-content: center;
+  opacity: 0.8;
+  width: 100%;
+`;
+
+const BoardTextContainer = styled.div`
+  align-items: center;
+  color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  font-size: 30px;
+  gap: 24px;
+  margin-top: -200px;
+`;
+
 const BoardRow = styled.div`
   display: flex;
 `;
@@ -62,26 +82,6 @@ const GameBoard = styled.div`
 
 const GameContainer = styled.div`
   display: flex;
-`;
-
-const LoadingOverlay = styled.div`
-  align-items: center;
-  background-color: #000000;
-  display: flex;
-  height: 100%;
-  justify-content: center;
-  opacity: 0.8;
-  width: 100%;
-`;
-
-const LoadingTextContainer = styled.div`
-  align-items: center;
-  color: #ffffff;
-  display: flex;
-  flex-direction: column;
-  font-size: 30px;
-  gap: 24px;
-  margin-top: -200px;
 `;
 
 const StatBar = styled.div`
@@ -140,13 +140,18 @@ export default function Game(): JSX.Element {
   return (
     <GameContainer>
       <GameBoard>
-        {!loadingPlots ? (
-          <LoadingOverlay>
-            <LoadingTextContainer>
-              <div>Fetching game state...</div>
+        {error && (
+          <BoardOverlay>
+            <BoardTextContainer>Error fetching game state.</BoardTextContainer>
+          </BoardOverlay>
+        )}
+        {loadingPlots ? (
+          <BoardOverlay>
+            <BoardTextContainer>
+              <>Fetching game state...</>
               <Spinner color="#ffffff" height={50} width={50} />
-            </LoadingTextContainer>
-          </LoadingOverlay>
+            </BoardTextContainer>
+          </BoardOverlay>
         ) : (
           <>
             {new Array(24).fill(0).map((_, rowIndex) => (

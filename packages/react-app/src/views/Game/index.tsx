@@ -5,7 +5,7 @@ import StatDisplay from "components/StatDisplay";
 import { useWallet } from "contexts/WalletContext";
 import { Plots } from "graphql/queries";
 import background from "images/boardBackground.svg";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import styled from "styled-components";
 import { toBigNumber, truncateAddress } from "utils";
 import { discover } from "web3/game";
@@ -63,6 +63,22 @@ const GameContainer = styled.div`
   display: flex;
 `;
 
+const LoadingOverlay = styled.div`
+  align-items: center;
+  background-color: #000000;
+  display: flex;
+  height: 100%;
+  justify-content: center;
+  opacity: 0.8;
+  width: 100%;
+`;
+
+const LoadingTextContainer = styled.div`
+  color: #ffffff;
+  font-size: 30px;
+  margin-top: -200px;
+`;
+
 const StatBar = styled.div`
   background: #b9b9b9;
   display: flex;
@@ -109,24 +125,42 @@ export default function Game(): JSX.Element {
     return row * 24 + col;
   };
 
+  const plotMap = useMemo(() => {
+    if (!plotData) return {};
+    return Object.fromEntries(
+      plotData.plots.map((plot: Plot) => [plot.id, { status: plot.status }]),
+    );
+  }, [plotData]);
+
   return (
     <GameContainer>
       <GameBoard>
-        {new Array(24).fill(0).map((_, rowIndex) => (
-          <BoardRow key={rowIndex}>
-            {new Array(24).fill(0).map((_, colIndex) => {
-              return (
-                <BoardSection
-                  // TODO: Get section status from subgraph
-                  color={gridSectionColor("undiscovered" as PlotStatus)}
-                  key={colIndex}
-                  onClick={() => handlePlotSelect(plotId(rowIndex, colIndex))}
-                  selected={plotId(rowIndex, colIndex) === selectedPlot?.id}
-                />
-              );
-            })}
-          </BoardRow>
-        ))}
+        {loadingPlots ? (
+          <LoadingOverlay>
+            <LoadingTextContainer>Fetching game state...</LoadingTextContainer>
+          </LoadingOverlay>
+        ) : (
+          <>
+            {new Array(24).fill(0).map((_, rowIndex) => (
+              <BoardRow key={rowIndex}>
+                {new Array(24).fill(0).map((_, colIndex) => {
+                  const id = plotId(rowIndex, colIndex);
+                  const plot = plotMap[id];
+                  // If plot is not in map then it has not been discovered
+                  const status = plot?.status.toLowerCase() ?? "undiscovered";
+                  return (
+                    <BoardSection
+                      color={gridSectionColor(status as PlotStatus)}
+                      key={colIndex}
+                      onClick={() => handlePlotSelect(id)}
+                      selected={id === selectedPlot?.id}
+                    />
+                  );
+                })}
+              </BoardRow>
+            ))}
+          </>
+        )}
         <BoardModal
           onClose={() => setSelectedPlot(null)}
           onSectionInteraction={() => handlePlotInteraction()}

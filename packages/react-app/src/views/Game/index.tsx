@@ -9,6 +9,7 @@ import background from "images/boardBackground.svg";
 import { useMemo, useState } from "react";
 import styled from "styled-components";
 import { toBigNumber, truncateAddress } from "utils";
+import { DISCOVER_FEE } from "utils/constants";
 import { discover } from "web3/game";
 
 import { gridSectionColor } from "./helpers";
@@ -115,7 +116,7 @@ export default function Game(): JSX.Element {
           provider,
           address,
           Number(selectedPlot.id),
-          toBigNumber(0.01, 18),
+          toBigNumber(DISCOVER_FEE, 18),
         );
         await tx.wait();
       }

@@ -5,7 +5,8 @@ import { useWallet } from "contexts/WalletContext";
 import background from "images/boardBackground.svg";
 import { useState } from "react";
 import styled from "styled-components";
-import { truncateAddress } from "utils";
+import { toBigNumber, truncateAddress } from "utils";
+import { discover } from "web3/game";
 
 import { gridSectionColor } from "./helpers";
 import { BoardSection as BoardSectionType, SectionStatus } from "./types";
@@ -71,18 +72,29 @@ const StatBar = styled.div`
 `;
 
 export default function Game(): JSX.Element {
-  const { address, connectWallet, disconnect, isConnected, isConnecting } =
-    useWallet();
+  const {
+    address,
+    connectWallet,
+    disconnect,
+    isConnected,
+    isConnecting,
+    provider,
+  } = useWallet();
   const [selectedSection, setSelectedSection] =
     useState<BoardSectionType | null>(null);
 
   const handleSectionInteraction = async () => {
-    if (!selectedSection) return;
+    if (!address || !provider || !selectedSection) return;
     switch (selectedSection.status) {
-      default:
-        // Discover
-        console.log("DISCOVER");
-        break;
+      default: {
+        const tx = await discover(
+          provider,
+          address,
+          Number(selectedSection.id),
+          toBigNumber(0.01, 18),
+        );
+        await tx.wait();
+      }
     }
   };
 

@@ -1,4 +1,8 @@
-import { utils } from "ethers";
+import { BigNumber, utils } from "ethers";
+
+export const toBigNumber = (amount: number, decimals: number): BigNumber => {
+  return utils.parseUnits(amount.toString(), 18);
+};
 
 export const truncateAddress = (address: string): string => {
   const account = utils.getAddress(address);

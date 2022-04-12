@@ -1,6 +1,7 @@
 import { useQuery } from "@apollo/client";
 import BoardModal from "components/BoardModal";
 import Button from "components/Button";
+import Spinner from "components/Spinner";
 import StatDisplay from "components/StatDisplay";
 import { useWallet } from "contexts/WalletContext";
 import { Plots } from "graphql/queries";
@@ -74,8 +75,12 @@ const LoadingOverlay = styled.div`
 `;
 
 const LoadingTextContainer = styled.div`
+  align-items: center;
   color: #ffffff;
+  display: flex;
+  flex-direction: column;
   font-size: 30px;
+  gap: 24px;
   margin-top: -200px;
 `;
 
@@ -135,9 +140,12 @@ export default function Game(): JSX.Element {
   return (
     <GameContainer>
       <GameBoard>
-        {loadingPlots ? (
+        {!loadingPlots ? (
           <LoadingOverlay>
-            <LoadingTextContainer>Fetching game state...</LoadingTextContainer>
+            <LoadingTextContainer>
+              <div>Fetching game state...</div>
+              <Spinner color="#ffffff" height={50} width={50} />
+            </LoadingTextContainer>
           </LoadingOverlay>
         ) : (
           <>

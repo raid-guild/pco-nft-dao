@@ -4,7 +4,7 @@ import Game from "views/Game";
 function App(): JSX.Element {
   return (
     <>
-      <Toaster />
+      <Toaster position="top-left" />
       <Game />
     </>
   );

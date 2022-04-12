@@ -7,6 +7,7 @@ import { useWallet } from "contexts/WalletContext";
 import { Plots } from "graphql/queries";
 import background from "images/boardBackground.svg";
 import { useMemo, useState } from "react";
+import toast from "react-hot-toast";
 import styled from "styled-components";
 import { toBigNumber, truncateAddress } from "utils";
 import { DISCOVER_FEE } from "utils/constants";
@@ -112,13 +113,25 @@ export default function Game(): JSX.Element {
     if (!address || !provider || !selectedPlot) return;
     switch (selectedPlot.status) {
       default: {
-        const tx = await discover(
-          provider,
-          address,
-          Number(selectedPlot.id),
-          toBigNumber(DISCOVER_FEE, 18),
+        const discoverToast = toast.loading(
+          `Discovering plot ${selectedPlot.id}`,
         );
-        await tx.wait();
+        try {
+          const tx = await discover(
+            provider,
+            address,
+            Number(selectedPlot.id),
+            toBigNumber(DISCOVER_FEE, 18),
+          );
+          await tx.wait();
+          toast.success(`Discovered plot ${selectedPlot.id}`, {
+            id: discoverToast,
+          });
+        } catch (err) {
+          toast.error(`Error discovering plot ${selectedPlot.id}`, {
+            id: discoverToast,
+          });
+        }
       }
     }
   };

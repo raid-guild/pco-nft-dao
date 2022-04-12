@@ -1,10 +1,10 @@
-export type BoardSection = {
+export type Plot = {
   id: number;
-  status: SectionStatus;
+  status: PlotStatus;
 };
 
-export enum SectionStatus {
-  Forclosure = "forclosure",
+export enum PlotStatus {
+  Forclosed = "forclosed",
   Owned = "owned",
   Undiscoverd = "undiscovered",
 }

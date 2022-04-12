@@ -136,18 +136,25 @@ export default function Game(): JSX.Element {
     }
   };
 
-  const handlePlotSelect = (pos: number) => {
-    setSelectedPlot({ id: pos, status: PlotStatus.Undiscoverd });
-  };
-
   const plotId = (row: number, col: number): number => {
     return row * 24 + col;
   };
 
-  const plotMap = useMemo(() => {
-    if (!plotData) return {};
-    return Object.fromEntries(
+  const plots = useMemo(() => {
+    if (!plotData) return [];
+    const plotMap = Object.fromEntries(
       plotData.plots.map((plot: Plot) => [plot.id, { status: plot.status }]),
+    );
+    return new Array(24).fill(0).map((_, row) =>
+      new Array(24).fill(0).map((_, col) => {
+        const id = plotId(row, col);
+        const plot = plotMap[id];
+        return {
+          id,
+          // If plot is not in map then it has not been discovered
+          status: plot?.status.toLowerCase() ?? PlotStatus.Undiscoverd,
+        };
+      }),
     );
   }, [plotData]);
 
@@ -168,22 +175,16 @@ export default function Game(): JSX.Element {
           </BoardOverlay>
         ) : (
           <>
-            {new Array(24).fill(0).map((_, rowIndex) => (
+            {plots.map((row, rowIndex) => (
               <BoardRow key={rowIndex}>
-                {new Array(24).fill(0).map((_, colIndex) => {
-                  const id = plotId(rowIndex, colIndex);
-                  const plot = plotMap[id];
-                  // If plot is not in map then it has not been discovered
-                  const status = plot?.status.toLowerCase() ?? "undiscovered";
-                  return (
-                    <BoardSection
-                      color={gridSectionColor(status as PlotStatus)}
-                      key={colIndex}
-                      onClick={() => handlePlotSelect(id)}
-                      selected={id === selectedPlot?.id}
-                    />
-                  );
-                })}
+                {row.map(plot => (
+                  <BoardSection
+                    color={gridSectionColor(plot.status as PlotStatus)}
+                    key={plot.id}
+                    onClick={() => setSelectedPlot(plot)}
+                    selected={plot.id === selectedPlot?.id}
+                  />
+                ))}
               </BoardRow>
             ))}
           </>

@@ -10,6 +10,22 @@
     "auth": "graph auth https://api.thegraph.com/ $GRAPH_ACCESS_TOKEN",
     "build": "graph build",
     "codegen": "graph codegen --output-dir src/types/",
-    "deploy": "graph deploy paulrberg/create-eth-app --ipfs https://api.thegraph.com/ipfs/ --node https://api.thegraph.com/deploy/"
+    "deploy": "graph deploy paulrberg/create-eth-app --ipfs https://api.thegraph.com/ipfs/ --node https://api.thegraph.com/deploy/",
+    "deploy-rinkeby": "graph deploy --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ ian-bright/pco_nft_rinkeby",
+    "format": "yarn prettier --write {src,scripts}/{*,**/*}.{ts,json,yaml}",
+    "precodegen-rinkeby": "rimraf src/generated && yarn script template --network rinkeby",
+    "script": "ts-node scripts"
+  },
+  "devDependencies": {
+    "@types/glob": "^7.2.0",
+    "@types/yargs": "^17.0.9",
+    "handlebars": "^4.7.7",
+    "glob": "^7.2.0",
+    "path": "^0.12.7",
+    "prettier": "^2.5.1",
+    "rimraf": "^3.0.2",
+    "ts-node": "^10.7.0",
+    "typescript": "^4.6.2",
+    "yargs": "^17.4.1"
   }
 }

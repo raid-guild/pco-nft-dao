@@ -1,13 +1,8 @@
-type Token @entity {
-  id: ID!
-  decimals: Int
-  name: String
-  symbol: String
+enum PlotStatus {
+  FORCLOSED
 }
 
-type Transfer @entity {
+type Plot @entity {
   id: ID!
-  from: String!
-  to: String!
-  value: BigInt!
+  status: PlotStatus
 }

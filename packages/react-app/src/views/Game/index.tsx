@@ -11,7 +11,7 @@ import { toBigNumber, truncateAddress } from "utils";
 import { discover } from "web3/game";
 
 import { gridSectionColor } from "./helpers";
-import { BoardSection as BoardSectionType, SectionStatus } from "./types";
+import { Plot, PlotStatus } from "./types";
 
 const DUMMY_STATS = [
   { label: "Land Purchased", value: "540 of 900" },
@@ -82,21 +82,18 @@ export default function Game(): JSX.Element {
     isConnecting,
     provider,
   } = useWallet();
-  const [selectedSection, setSelectedSection] =
-    useState<BoardSectionType | null>(null);
+  const [selectedPlot, setSelectedPlot] = useState<Plot | null>(null);
 
   const { data: plotData, error, loading: loadingPlots } = useQuery(Plots);
 
-  console.log("PLOT DATA: ", plotData);
-
-  const handleSectionInteraction = async () => {
-    if (!address || !provider || !selectedSection) return;
-    switch (selectedSection.status) {
+  const handlePlotInteraction = async () => {
+    if (!address || !provider || !selectedPlot) return;
+    switch (selectedPlot.status) {
       default: {
         const tx = await discover(
           provider,
           address,
-          Number(selectedSection.id),
+          Number(selectedPlot.id),
           toBigNumber(0.01, 18),
         );
         await tx.wait();
@@ -104,8 +101,12 @@ export default function Game(): JSX.Element {
     }
   };
 
-  const handleSectionSelect = (pos: number) => {
-    setSelectedSection({ id: pos, status: SectionStatus.Undiscoverd });
+  const handlePlotSelect = (pos: number) => {
+    setSelectedPlot({ id: pos, status: PlotStatus.Undiscoverd });
+  };
+
+  const plotId = (row: number, col: number): number => {
+    return row * 24 + col;
   };
 
   return (
@@ -117,20 +118,20 @@ export default function Game(): JSX.Element {
               return (
                 <BoardSection
                   // TODO: Get section status from subgraph
-                  color={gridSectionColor("undiscovered" as SectionStatus)}
+                  color={gridSectionColor("undiscovered" as PlotStatus)}
                   key={colIndex}
-                  onClick={() => handleSectionSelect(rowIndex * 24 + colIndex)}
-                  selected={rowIndex * 24 + colIndex === selectedSection?.id}
+                  onClick={() => handlePlotSelect(plotId(rowIndex, colIndex))}
+                  selected={plotId(rowIndex, colIndex) === selectedPlot?.id}
                 />
               );
             })}
           </BoardRow>
         ))}
         <BoardModal
-          onClose={() => setSelectedSection(null)}
-          onSectionInteraction={() => handleSectionInteraction()}
-          open={!!selectedSection}
-          sectionData={selectedSection ?? ({} as BoardSectionType)}
+          onClose={() => setSelectedPlot(null)}
+          onSectionInteraction={() => handlePlotInteraction()}
+          open={!!selectedPlot}
+          sectionData={selectedPlot ?? ({} as Plot)}
         />
       </GameBoard>
       <StatBar>

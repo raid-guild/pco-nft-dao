@@ -2,7 +2,7 @@ import Button from "components/Button";
 import close from "images/close.svg";
 import { capitalize } from "lodash";
 import styled from "styled-components";
-import { BoardSection, SectionStatus } from "views/Game/types";
+import { Plot, PlotStatus } from "views/Game/types";
 
 // type ModalBodyProps = {};
 
@@ -10,7 +10,7 @@ type BoardModalProps = {
   onClose: () => void;
   onSectionInteraction: () => void;
   open: boolean;
-  sectionData: BoardSection;
+  sectionData: Plot;
 };
 
 const ActionContainer = styled.div`
@@ -70,7 +70,7 @@ export default function BoardModal({
         </div>
       </Content>
       <ActionContainer>
-        {sectionData.status === SectionStatus.Undiscoverd && (
+        {sectionData.status === PlotStatus.Undiscoverd && (
           <Button onChange={onSectionInteraction} text="Discover" />
         )}
       </ActionContainer>

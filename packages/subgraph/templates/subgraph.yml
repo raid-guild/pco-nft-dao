@@ -4,11 +4,11 @@ schema:
 dataSources:
   - kind: ethereum/contract
     name: HarbergerNft
-    network: rinkeby
+    network: {{networkName}}
     source: 
-      address: '0x3249eee788c1d4d339fba59746dea8d1a0906293'
+      address: '{{harbergerNft}}'
       abi: HarbergerNft
-      startBlock: 10455129
+      startBlock: {{startBlock}}
     mapping: 
       kind: ethereum/events
       apiVersion: 0.0.5

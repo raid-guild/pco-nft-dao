@@ -4,7 +4,9 @@ export const Plots = gql`
   {
     plots(first: 1000) {
       id
+      staked
       status
+      owner
     }
   }
 `;

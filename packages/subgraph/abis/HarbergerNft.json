@@ -17,7 +17,8 @@
       "anonymous": false,
       "inputs": [
         { "indexed": false, "internalType": "uint256", "name": "plotId", "type": "uint256" },
-        { "indexed": false, "internalType": "uint256", "name": "amount", "type": "uint256" }
+        { "indexed": false, "internalType": "uint256", "name": "amount", "type": "uint256" },
+        { "indexed": false, "internalType": "uint256", "name": "period", "type": "uint256" }
       ],
       "name": "AddStake",
       "type": "event"
@@ -45,10 +46,21 @@
     {
       "anonymous": false,
       "inputs": [
+        { "indexed": false, "internalType": "uint256", "name": "plotId", "type": "uint256" },
+        { "indexed": false, "internalType": "uint256", "name": "price", "type": "uint256" },
+        { "indexed": false, "internalType": "uint256", "name": "period", "type": "uint256" }
+      ],
+      "name": "Buy",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
         { "indexed": false, "internalType": "uint256", "name": "sharesOwner", "type": "uint256" },
         { "indexed": false, "internalType": "uint256", "name": "lootPg", "type": "uint256" },
         { "indexed": false, "internalType": "uint256", "name": "lootCollector", "type": "uint256" },
-        { "indexed": false, "internalType": "uint256", "name": "fundsDao", "type": "uint256" }
+        { "indexed": false, "internalType": "uint256", "name": "fundsDao", "type": "uint256" },
+        { "indexed": false, "internalType": "uint256", "name": "foreclosePeriod", "type": "uint256" }
       ],
       "name": "Collection",
       "type": "event"
@@ -58,7 +70,8 @@
       "inputs": [
         { "indexed": false, "internalType": "uint256", "name": "plotId", "type": "uint256" },
         { "indexed": false, "internalType": "uint256", "name": "amount", "type": "uint256" },
-        { "indexed": false, "internalType": "address", "name": "_paidTo", "type": "address" }
+        { "indexed": false, "internalType": "address", "name": "paidTo", "type": "address" },
+        { "indexed": false, "internalType": "uint256", "name": "period", "type": "uint256" }
       ],
       "name": "DiscoverFee",
       "type": "event"
@@ -104,7 +117,8 @@
       "anonymous": false,
       "inputs": [
         { "indexed": false, "internalType": "uint256", "name": "plotId", "type": "uint256" },
-        { "indexed": false, "internalType": "uint256", "name": "amount", "type": "uint256" }
+        { "indexed": false, "internalType": "uint256", "name": "amount", "type": "uint256" },
+        { "indexed": false, "internalType": "uint256", "name": "foreclosePeriod", "type": "uint256" }
       ],
       "name": "Unstake",
       "type": "event"
@@ -152,6 +166,26 @@
       "type": "function"
     },
     {
+      "inputs": [
+        { "internalType": "address", "name": "_to", "type": "address" },
+        { "internalType": "uint256", "name": "_plotId", "type": "uint256" },
+        { "internalType": "uint256", "name": "_price", "type": "uint256" },
+        { "internalType": "uint256", "name": "_periods", "type": "uint256" },
+        { "internalType": "uint256", "name": "_amount", "type": "uint256" }
+      ],
+      "name": "buyAndDeposit",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "cap",
+      "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
       "inputs": [{ "internalType": "uint256[]", "name": "_plotIds", "type": "uint256[]" }],
       "name": "collect",
       "outputs": [],
@@ -161,6 +195,13 @@
     {
       "inputs": [],
       "name": "collectionRate",
+      "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "cols",
       "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
       "stateMutability": "view",
       "type": "function"
@@ -190,6 +231,19 @@
         { "internalType": "uint256", "name": "_amount", "type": "uint256" }
       ],
       "name": "discover",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        { "internalType": "address", "name": "_to", "type": "address" },
+        { "internalType": "uint256", "name": "_plotId", "type": "uint256" },
+        { "internalType": "uint256", "name": "_price", "type": "uint256" },
+        { "internalType": "uint256", "name": "_periods", "type": "uint256" },
+        { "internalType": "uint256", "name": "_amount", "type": "uint256" }
+      ],
+      "name": "discoverAndDeposit",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -228,6 +282,13 @@
     {
       "inputs": [],
       "name": "gracePeriod",
+      "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "imgScale",
       "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
       "stateMutability": "view",
       "type": "function"
@@ -299,6 +360,7 @@
         { "internalType": "uint256", "name": "stake", "type": "uint256" },
         { "internalType": "uint256", "name": "foreclosePeriod", "type": "uint256" },
         { "internalType": "uint256", "name": "lastCollectionPeriod", "type": "uint256" },
+        { "internalType": "uint256", "name": "discoverPeriod", "type": "uint256" },
         { "internalType": "uint256", "name": "price", "type": "uint256" },
         { "internalType": "uint24", "name": "color", "type": "uint24" }
       ],
@@ -323,7 +385,27 @@
       "stateMutability": "nonpayable",
       "type": "function"
     },
+    {
+      "inputs": [
+        { "internalType": "address", "name": "_to", "type": "address" },
+        { "internalType": "uint256", "name": "_plotId", "type": "uint256" },
+        { "internalType": "uint256", "name": "_price", "type": "uint256" },
+        { "internalType": "uint256", "name": "_periods", "type": "uint256" },
+        { "internalType": "uint256", "name": "_amount", "type": "uint256" }
+      ],
+      "name": "reclaimAndDeposit",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
     { "inputs": [], "name": "renounceOwnership", "outputs": [], "stateMutability": "nonpayable", "type": "function" },
+    {
+      "inputs": [],
+      "name": "rows",
+      "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+      "stateMutability": "view",
+      "type": "function"
+    },
     {
       "inputs": [
         { "internalType": "address", "name": "from", "type": "address" },
@@ -385,6 +467,13 @@
       "type": "function"
     },
     {
+      "inputs": [],
+      "name": "summoningTime",
+      "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
       "inputs": [{ "internalType": "bytes4", "name": "interfaceId", "type": "bytes4" }],
       "name": "supportsInterface",
       "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
@@ -408,6 +497,13 @@
     {
       "inputs": [],
       "name": "taxRate",
+      "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "tileSize",
       "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
       "stateMutability": "view",
       "type": "function"
@@ -442,6 +538,13 @@
       "name": "transferOwnership",
       "outputs": [],
       "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "unitPer",
+      "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+      "stateMutability": "view",
       "type": "function"
     },
     {

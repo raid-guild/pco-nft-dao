@@ -19,6 +19,14 @@ dataSources:
         - name: HarbergerNft
           file: ./abis/HarbergerNft.json
       eventHandlers: 
-         - event: DiscoverFee(uint256,uint256,address)
-           handler: handlePlotDiscovered
+         - event: AddStake(uint256,uint256,uint256)
+           handler: handleDeposit
+         - event: Buy(uint256,uint256,uint256)
+           handler: handleBuy
+         - event: DiscoverFee(uint256,uint256,address,uint256)
+           handler: handleDiscover
+         - event: SetPrice(uint256,uint256)
+           handler: handlePriceSet
+         - event: Unstake(uint256,uint256,uint256)
+           handler: handleUnstake
       file: ./src/mappings/HarbergerNft.ts

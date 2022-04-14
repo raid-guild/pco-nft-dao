@@ -1,4 +1,5 @@
 import { useQuery } from "@apollo/client";
+import BirdLogo from "assets/images/pico_logo.png";
 import BoardModal from "components/BoardModal";
 import Button from "components/Button";
 import Spinner from "components/Spinner";
@@ -7,29 +8,26 @@ import { useWallet } from "contexts/WalletContext";
 import { Plots } from "graphql/queries";
 import background from "images/picomap.jpg";
 import { useMemo, useState } from "react";
-import toast from "react-hot-toast";
 import styled from "styled-components";
-import { toBigNumber, truncateAddress } from "utils";
-import { DISCOVER_FEE } from "utils/constants";
-import { discover } from "web3/game";
+import { truncateAddress } from "utils";
 
-import BirdLogo from "../../assets/images/pico_logo.png";
-import { gridSectionColor } from "./helpers";
+import { plotColor } from "./helpers";
 import { Plot, PlotStatus } from "./types";
 
 const DUMMY_STATS = [
   { label: "Land Purchased", value: "540 of 900" },
   { label: "Average Price per NFT", value: "21.45 DAI" },
   { label: "Taxes Collected", value: "7823 DAI" },
-  { label: "Taxes Owing", value: "560 DAI" },
   { label: "DAO Shares Issued", value: "500" },
   { label: "Loot Issued", value: "4000" },
   { label: "Total Owners", value: "28" },
   { label: "Tax Rate", value: "3%" },
 ];
 
-type GameSectionProps = {
+type PlotProps = {
   color: string;
+  discovered: boolean;
+  owner: boolean;
   selected: boolean;
 };
 
@@ -64,8 +62,9 @@ const BoardRow = styled.div`
   display: flex;
 `;
 
-const BoardSection = styled.div<GameSectionProps>`
+const BoardSection = styled.div<PlotProps>`
   background-color: ${({ color }) => color};
+  border: 1px solid ${({ owner }) => (owner ? "#FFF94F" : "transparent")};
   cursor: pointer;
   height: 40px;
   opacity: ${({ selected }) => (selected ? 0 : 0.6)};
@@ -79,7 +78,6 @@ const BoardSection = styled.div<GameSectionProps>`
 const GameBoard = styled.div`
   background-image: url(${background});
   height: 960px;
-  position: relative;
   width: 960px;
 `;
 
@@ -110,33 +108,33 @@ const GameContainer = styled.div`
   }
 `;
 
-const GameContainerInner = styled.div`
-  position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border: 2px solid #ff3864;
-  padding: 16px;
-  &:before,
-  &:after {
-    content: "•";
-    position: absolute;
-    width: 14px;
-    height: 14px;
-    font-size: 14px;
-    color: #b78846;
-    border: 2px solid #ff3864;
-    line-height: 12px;
-    bottom: -2px;
-    text-align: center;
-  }
-  &:before {
-    left: -2px;
-  }
-  &:after {
-    right: -2px;
-  }
-`;
+// const GameContainerInner = styled.div`
+//   position: relative;
+//   display: flex;
+//   justify-content: center;
+//   align-items: center;
+//   border: 2px solid #ff3864;
+//   padding: 16px;
+//   &:before,
+//   &:after {
+//     content: "•";
+//     position: absolute;
+//     width: 14px;
+//     height: 14px;
+//     font-size: 14px;
+//     color: #b78846;
+//     border: 2px solid #ff3864;
+//     line-height: 12px;
+//     bottom: -2px;
+//     text-align: center;
+//   }
+//   &:before {
+//     left: -2px;
+//   }
+//   &:after {
+//     right: -2px;
+//   }
+// `;
 
 type StatBarProps = {
   isNavbarVisable: boolean;
@@ -156,6 +154,7 @@ const StatBar = styled.div<StatBarProps>`
   gap: 14px;
   padding: 2.5rem 24px;
   transition: 850ms;
+  zindex: 100;
 `;
 
 const Pico = styled.div`
@@ -164,112 +163,78 @@ const Pico = styled.div`
 `;
 
 export default function Game(): JSX.Element {
-  const {
-    address,
-    connectWallet,
-    disconnect,
-    isConnected,
-    isConnecting,
-    provider,
-  } = useWallet();
+  const { address, connectWallet, disconnect, isConnected, isConnecting } =
+    useWallet();
   const [selectedPlot, setSelectedPlot] = useState<Plot | null>(null);
   const [isNavbarVisable, setIsNavbarVisable] = useState<boolean>(true);
 
   const { data: plotData, error, loading: loadingPlots } = useQuery(Plots);
 
-  const handlePlotInteraction = async () => {
-    if (!address || !provider || !selectedPlot) return;
-    switch (selectedPlot.status) {
-      default: {
-        const discoverToast = toast.loading(
-          `Discovering plot ${selectedPlot.id}`,
-        );
-        try {
-          const tx = await discover(
-            provider,
-            address,
-            Number(selectedPlot.id),
-            toBigNumber(DISCOVER_FEE, 18),
-          );
-          await tx.wait();
-          toast.success(`Discovered plot ${selectedPlot.id}`, {
-            id: discoverToast,
-          });
-        } catch (err) {
-          toast.error(`Error discovering plot ${selectedPlot.id}`, {
-            id: discoverToast,
-          });
-        }
-      }
-    }
-  };
-
-  const handlePlotSelect = (pos: number) => {
-    setSelectedPlot({ id: pos, status: PlotStatus.Undiscoverd });
-  };
-
   const plotId = (row: number, col: number): number => {
     return row * 24 + col;
   };
 
-  const plotMap = useMemo(() => {
-    if (!plotData) return {};
-    return Object.fromEntries(
-      plotData.plots.map((plot: Plot) => [plot.id, { status: plot.status }]),
+  const plots = useMemo(() => {
+    if (!plotData) return [];
+    const plotMap = Object.fromEntries(
+      plotData.plots.map((plot: Plot) => [
+        plot.id,
+        { owner: plot.owner, staked: plot.staked, status: plot.status },
+      ]),
+    );
+    return new Array(24).fill(0).map((_, row) =>
+      new Array(24).fill(0).map((_, col) => {
+        const id = plotId(row, col);
+        const plot = plotMap[id];
+        return {
+          id,
+          owner: plot?.owner,
+          staked: plot?.staked ?? 0,
+          status: plot?.status.toLowerCase() ?? PlotStatus.Undiscovered,
+        };
+      }),
     );
   }, [plotData]);
 
   return (
-    <>
-      <GameContainer>
-        <GameContainerInner>
-          <GameBoard>
-            {error && (
-              <BoardOverlay>
-                <BoardTextContainer>
-                  Error fetching game state.
-                </BoardTextContainer>
-              </BoardOverlay>
-            )}
-            {loadingPlots ? (
-              <BoardOverlay>
-                <BoardTextContainer>
-                  <>Fetching game state...</>
-                  <Spinner color="#ffffff" height={50} width={50} />
-                </BoardTextContainer>
-              </BoardOverlay>
-            ) : (
-              <>
-                {new Array(24).fill(0).map((_, rowIndex) => (
-                  <BoardRow key={rowIndex}>
-                    {new Array(24).fill(0).map((_, colIndex) => {
-                      const id = plotId(rowIndex, colIndex);
-                      const plot = plotMap[id];
-                      // If plot is not in map then it has not been discovered
-                      const status =
-                        plot?.status.toLowerCase() ?? "undiscovered";
-                      return (
-                        <BoardSection
-                          color={gridSectionColor(status as PlotStatus)}
-                          key={colIndex}
-                          onClick={() => handlePlotSelect(id)}
-                          selected={id === selectedPlot?.id}
-                        />
-                      );
-                    })}
-                  </BoardRow>
+    <GameContainer>
+      <GameBoard>
+        {error && (
+          <BoardOverlay>
+            <BoardTextContainer>Error fetching game state.</BoardTextContainer>
+          </BoardOverlay>
+        )}
+        {loadingPlots ? (
+          <BoardOverlay>
+            <BoardTextContainer>
+              <>Fetching game state...</>
+              <Spinner color="#ffffff" height={50} width={50} />
+            </BoardTextContainer>
+          </BoardOverlay>
+        ) : (
+          <>
+            {plots.map((row, rowIndex) => (
+              <BoardRow key={rowIndex}>
+                {row.map(plot => (
+                  <BoardSection
+                    color={plotColor(plot.status as PlotStatus)}
+                    discovered={plot.status !== PlotStatus.Undiscovered}
+                    key={plot.id}
+                    onClick={() => setSelectedPlot(plot)}
+                    owner={address ? address === plot.owner : false}
+                    selected={plot.id === selectedPlot?.id}
+                  />
                 ))}
-              </>
-            )}
-            <BoardModal
-              onClose={() => setSelectedPlot(null)}
-              onSectionInteraction={() => handlePlotInteraction()}
-              open={!!selectedPlot}
-              sectionData={selectedPlot ?? ({} as Plot)}
-            />
-          </GameBoard>
-        </GameContainerInner>
-      </GameContainer>
+              </BoardRow>
+            ))}
+          </>
+        )}
+        <BoardModal
+          onClose={() => setSelectedPlot(null)}
+          open={!!selectedPlot}
+          plot={selectedPlot ?? ({} as Plot)}
+        />
+      </GameBoard>
       <StatBar isNavbarVisable={isNavbarVisable}>
         {DUMMY_STATS.map(stat => (
           <StatDisplay key={stat.label} label={stat.label} value={stat.value} />
@@ -293,6 +258,6 @@ export default function Game(): JSX.Element {
           <img src={BirdLogo} alt="" />
         </Pico>
       </StatBar>
-    </>
+    </GameContainer>
   );
 }

@@ -1,8 +1,13 @@
 enum PlotStatus {
   FORCLOSED
+  OWNED
 }
 
 type Plot @entity {
   id: ID!
+  lastDeposit: BigInt
+  salePrice: BigInt
+  staked: BigInt!
   status: PlotStatus
+  owner: Bytes
 }

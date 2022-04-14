@@ -1,15 +1,19 @@
 import Button from "components/Button";
+import { useWallet } from "contexts/WalletContext";
 import plotImage from "images/boardBackground.svg";
 import close from "images/close.svg";
 import { capitalize } from "lodash";
+import toast from "react-hot-toast";
 import styled from "styled-components";
+import { toBigNumber } from "utils";
+import { DISCOVER_FEE } from "utils/constants";
 import { Plot, PlotStatus } from "views/Game/types";
+import { discover } from "web3/game";
 
 type BoardModalProps = {
   onClose: () => void;
-  onSectionInteraction: () => void;
   open: boolean;
-  sectionData: Plot;
+  plot: Plot;
 };
 
 type PlotImageProps = {
@@ -78,12 +82,38 @@ const Text = styled.div`
 
 export default function BoardModal({
   onClose,
-  onSectionInteraction,
   open,
-  sectionData,
+  plot,
 }: BoardModalProps): JSX.Element {
-  const xCrop = (1 / 24) * (23 - (sectionData.id % 24)) * 100;
-  const yCrop = (1 / 24) * (23 - Math.floor(sectionData.id / 24)) * 100;
+  const { address, provider } = useWallet();
+  const xCrop = (1 / 24) * (23 - (plot.id % 24)) * 100;
+  const yCrop = (1 / 24) * (23 - Math.floor(plot.id / 24)) * 100;
+
+  const handlePlotInteraction = async () => {
+    if (!address || !provider) return;
+    switch (plot.status) {
+      default: {
+        const discoverToast = toast.loading(`Discovering plot ${plot.id}`);
+        try {
+          const tx = await discover(
+            provider,
+            address,
+            Number(plot.id),
+            toBigNumber(DISCOVER_FEE, 18),
+          );
+          await tx.wait();
+          toast.success(`Discovered plot ${plot.id}`, {
+            id: discoverToast,
+          });
+        } catch (err) {
+          toast.error(`Error discovering plot ${plot.id}`, {
+            id: discoverToast,
+          });
+        }
+      }
+    }
+  };
+
   console.log("XCROP: ", xCrop);
   console.log("YCROP: ", yCrop);
   if (!open) return <></>;
@@ -92,14 +122,14 @@ export default function BoardModal({
       <Close alt="Close" onClick={() => onClose()} src={close} />
       <Content>
         <div>
-          <Text>Section ID: {sectionData.id}</Text>
-          <Text>Status: {capitalize(sectionData.status)}</Text>
+          <Text>Section ID: {plot.id}</Text>
+          <Text>Status: {capitalize(plot.status)}</Text>
           <PlotImage alt="Plot" src={plotImage} xCrop={xCrop} yCrop={yCrop} />
         </div>
       </Content>
       <ActionContainer>
-        {sectionData.status === PlotStatus.Undiscovered && (
-          <Button onChange={onSectionInteraction} text="Discover" />
+        {plot.status === PlotStatus.Undiscovered && (
+          <Button onChange={handlePlotInteraction} text="Discover" />
         )}
       </ActionContainer>
     </ModalBody>

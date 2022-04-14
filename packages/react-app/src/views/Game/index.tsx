@@ -1,4 +1,5 @@
 import { useQuery } from "@apollo/client";
+import BirdLogo from "assets/images/pico_logo.png";
 import BoardModal from "components/BoardModal";
 import Button from "components/Button";
 import Spinner from "components/Spinner";
@@ -7,14 +8,10 @@ import { useWallet } from "contexts/WalletContext";
 import { Plots } from "graphql/queries";
 import background from "images/boardBackground.svg";
 import { useMemo, useState } from "react";
-import toast from "react-hot-toast";
 import styled from "styled-components";
-import { toBigNumber, truncateAddress } from "utils";
-import { DISCOVER_FEE } from "utils/constants";
-import { discover } from "web3/game";
+import { truncateAddress } from "utils";
 
 import { plotColor } from "./helpers";
-import BirdLogo from "assets/images/pico_logo.png";
 import { Plot, PlotStatus } from "./types";
 
 const DUMMY_STATS = [
@@ -108,33 +105,33 @@ const GameContainer = styled.div`
   }
 `;
 
-const GameContainerInner = styled.div`
-  position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border: 2px solid #ff3864;
-  padding: 16px;
-  &:before,
-  &:after {
-    content: "•";
-    position: absolute;
-    width: 14px;
-    height: 14px;
-    font-size: 14px;
-    color: #b78846;
-    border: 2px solid #ff3864;
-    line-height: 12px;
-    bottom: -2px;
-    text-align: center;
-  }
-  &:before {
-    left: -2px;
-  }
-  &:after {
-    right: -2px;
-  }
-`;
+// const GameContainerInner = styled.div`
+//   position: relative;
+//   display: flex;
+//   justify-content: center;
+//   align-items: center;
+//   border: 2px solid #ff3864;
+//   padding: 16px;
+//   &:before,
+//   &:after {
+//     content: "•";
+//     position: absolute;
+//     width: 14px;
+//     height: 14px;
+//     font-size: 14px;
+//     color: #b78846;
+//     border: 2px solid #ff3864;
+//     line-height: 12px;
+//     bottom: -2px;
+//     text-align: center;
+//   }
+//   &:before {
+//     left: -2px;
+//   }
+//   &:after {
+//     right: -2px;
+//   }
+// `;
 
 type StatBarProps = {
   isNavbarVisable: boolean;
@@ -154,6 +151,7 @@ const StatBar = styled.div<StatBarProps>`
   gap: 14px;
   padding: 2.5rem 24px;
   transition: 850ms;
+  zindex: 100;
 `;
 
 const Pico = styled.div`
@@ -162,45 +160,12 @@ const Pico = styled.div`
 `;
 
 export default function Game(): JSX.Element {
-  const {
-    address,
-    connectWallet,
-    disconnect,
-    isConnected,
-    isConnecting,
-    provider,
-  } = useWallet();
+  const { address, connectWallet, disconnect, isConnected, isConnecting } =
+    useWallet();
   const [selectedPlot, setSelectedPlot] = useState<Plot | null>(null);
   const [isNavbarVisable, setIsNavbarVisable] = useState<boolean>(true);
 
   const { data: plotData, error, loading: loadingPlots } = useQuery(Plots);
-
-  const handlePlotInteraction = async () => {
-    if (!address || !provider || !selectedPlot) return;
-    switch (selectedPlot.status) {
-      default: {
-        const discoverToast = toast.loading(
-          `Discovering plot ${selectedPlot.id}`,
-        );
-        try {
-          const tx = await discover(
-            provider,
-            address,
-            Number(selectedPlot.id),
-            toBigNumber(DISCOVER_FEE, 18),
-          );
-          await tx.wait();
-          toast.success(`Discovered plot ${selectedPlot.id}`, {
-            id: discoverToast,
-          });
-        } catch (err) {
-          toast.error(`Error discovering plot ${selectedPlot.id}`, {
-            id: discoverToast,
-          });
-        }
-      }
-    }
-  };
 
   const plotId = (row: number, col: number): number => {
     return row * 24 + col;
@@ -257,9 +222,8 @@ export default function Game(): JSX.Element {
         )}
         <BoardModal
           onClose={() => setSelectedPlot(null)}
-          onSectionInteraction={() => handlePlotInteraction()}
           open={!!selectedPlot}
-          sectionData={selectedPlot ?? ({} as Plot)}
+          plot={selectedPlot ?? ({} as Plot)}
         />
       </GameBoard>
       <StatBar isNavbarVisable={isNavbarVisable}>

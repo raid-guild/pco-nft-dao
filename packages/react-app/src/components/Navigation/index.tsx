@@ -1,8 +1,8 @@
 import React from "react";
 import styled from "styled-components";
+
 import { ReactComponent as Feather } from "../../assets/icons/feather_scribe.svg";
 import { ReactComponent as FireLamp } from "../../assets/icons/fire_lamp.svg";
-
 import RaidLogo from "../../assets/images/raidguild__logo.png";
 
 const Header = styled.header`

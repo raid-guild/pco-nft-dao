@@ -1,8 +1,7 @@
+import Button from "components/Button";
+import StatDisplay from "components/StatDisplay";
 import React from "react";
 import styled from "styled-components";
-
-import StatDisplay from "components/StatDisplay";
-import Button from "components/Button";
 import { toBigNumber, truncateAddress } from "utils";
 
 const DUMMY_STATS = [

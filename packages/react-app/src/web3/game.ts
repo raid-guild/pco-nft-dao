@@ -13,6 +13,10 @@ const plotReturn = [
   "uint24",
 ];
 
+const uriReturn = [
+  "string",
+];
+
 const checkHarberAllowance = async (
   provider: providers.Web3Provider,
   user: string,
@@ -86,6 +90,17 @@ export const getPlot = async (
   ]);
   const game = new Contract(HARBERGER_CONTRACT, abi, provider);
   return game.plots(plotId);
+};
+
+export const getTokenURI = async (
+  provider: providers.Web3Provider,
+  plotId: number,
+): Promise<providers.TransactionResponse> => {
+  const abi = new utils.Interface([
+    `function tokenURI(uint256 _plotId) public view returns(${uriReturn.toString()})`,
+  ]);
+  const game = new Contract(HARBERGER_CONTRACT, abi, provider);
+  return game.tokenURI(plotId);
 };
 
 export const setPrice = async (

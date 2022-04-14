@@ -10,7 +10,15 @@ import styled from "styled-components";
 import { toBigNumber, truncateAddress } from "utils";
 import { DISCOVER_FEE } from "utils/constants";
 import { Plot, PlotStatus } from "views/Game/types";
-import { deposit, discover, setPrice, unstake } from "web3/game";
+import {
+  deposit,
+  discover,
+  getPlot,
+  getTokenURI,
+  setPrice,
+  unstake,
+} from "web3/game";
+import { useEffect, useState } from "react";
 
 type BoardModalProps = {
   onClose: () => void;
@@ -96,6 +104,7 @@ export default function BoardModal({
   const { address, provider } = useWallet();
   const xCrop = (1 / 24) * (23 - (plot.id % 24)) * 100;
   const yCrop = (1 / 24) * (23 - Math.floor(plot.id / 24)) * 100;
+  const [tile, setTile] = useState<string>("");
 
   // const buyPlot = async () => {
   //   const buyToast = toast.loading(`Buying plot ${plot.id}`);
@@ -210,13 +219,26 @@ export default function BoardModal({
     undiscovered: [{ action: discoverPlot, text: "Discover" }],
   };
 
-  // useEffect(() => {
-  //   if (!open) return;
-  //   (async () => {
-  //     if (!provider) return;
-  //     const plotData = await getPlot(provider, plot.id);
-  //   })();
-  // }, [open, plot, provider]);
+  useEffect(() => {
+    if (!open) return;
+    (async () => {
+      if (!provider) return;
+
+      try {
+        const plotData = await getPlot(provider, plot.id);
+        const uriData = await getTokenURI(provider, plot.id);
+        const jsonString = atob(uriData.toString().split(";base64,")[1]);
+        const parseJson = JSON.parse(jsonString);
+        console.log("image", parseJson.image);
+
+        setTile(parseJson.image);
+      } catch (err) {
+        console.log(err);
+        
+        setTile("");
+      }
+    })();
+  }, [open, plot, provider]);
 
   if (!open) return <></>;
   return (
@@ -226,7 +248,12 @@ export default function BoardModal({
         <div>
           <Text>Section ID: {plot.id}</Text>
           <Text>Status: {capitalize(plot.status)}</Text>
-          <PlotImage alt="Plot" src={plotImage} xCrop={xCrop} yCrop={yCrop} />
+          <PlotImage
+            alt="Plot"
+            src={tile || plotImage}
+            xCrop={xCrop}
+            yCrop={yCrop}
+          />
         </div>
         {plot.status !== PlotStatus.Undiscovered && (
           <div>

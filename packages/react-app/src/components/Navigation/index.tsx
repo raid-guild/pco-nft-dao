@@ -21,7 +21,7 @@ const Navigation: React.FC = () => {
   return (
     <Header>
       <a
-        href="https://app.daohaus.club/dao/0x4/0x60fa6ff012ed0f05ec0196cfc114bb4ea8b22bea"
+        href="https://app.daohaus.club/dao/0x4/0xA9fC78DC011BF8BeF3909fBaC59dE735F673f15b"
         target="_blank"
         rel="noreferrer"
       >

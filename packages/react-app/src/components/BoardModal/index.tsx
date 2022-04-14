@@ -234,7 +234,7 @@ export default function BoardModal({
         setTile(parseJson.image);
       } catch (err) {
         console.log(err);
-        
+
         setTile("");
       }
     })();

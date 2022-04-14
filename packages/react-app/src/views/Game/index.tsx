@@ -84,8 +84,8 @@ const GameBoard = styled.div`
 const GameContainer = styled.div`
   position: relative;
   width: 100%;
-  max-width: 996px;
-  padding: 5px;
+  max-width: 960px;
+  padding: 25px;
   border: 2px solid #ff3864;
   &:before,
   &:after {

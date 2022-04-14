@@ -77,7 +77,7 @@ const PlotImage = styled.img<PlotImageProps>`
     `inset(${xCrop}% ${xCrop}% ${yCrop}% 0)`};
   height: 150px;
   margin-top: 12px;
-  width: 250px;
+  width: 150px;
 `;
 
 const Text = styled.div`

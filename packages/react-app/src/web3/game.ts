@@ -3,6 +3,16 @@ import { HARBERGER_CONTRACT, WEENUS_CONTRACT } from "utils/constants";
 
 import { allowance, approve } from "./erc20";
 
+const plotReturn = [
+  "address",
+  "uint256",
+  "uint256",
+  "uint256",
+  "uint256",
+  "uint256",
+  "uint24",
+];
+
 const checkHarberAllowance = async (
   provider: providers.Web3Provider,
   user: string,
@@ -65,6 +75,17 @@ export const discover = async (
   await checkHarberAllowance(provider, to);
   const game = new Contract(HARBERGER_CONTRACT, abi, provider.getSigner());
   return game.discover(to, plotId, amount);
+};
+
+export const getPlot = async (
+  provider: providers.Web3Provider,
+  plotId: number,
+): Promise<providers.TransactionResponse> => {
+  const abi = new utils.Interface([
+    `function plots(uint256 _plotId) public view returns(${plotReturn.toString()})`,
+  ]);
+  const game = new Contract(HARBERGER_CONTRACT, abi, provider);
+  return game.plots(plotId);
 };
 
 export const setPrice = async (

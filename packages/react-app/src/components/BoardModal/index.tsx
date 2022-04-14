@@ -4,12 +4,13 @@ import { useWallet } from "contexts/WalletContext";
 import plotImage from "images/boardBackground.svg";
 import close from "images/close.svg";
 import { capitalize } from "lodash";
+// mport { useEffect } from "react";
 import toast from "react-hot-toast";
 import styled from "styled-components";
 import { toBigNumber, truncateAddress } from "utils";
 import { DISCOVER_FEE } from "utils/constants";
 import { Plot, PlotStatus } from "views/Game/types";
-import { buy, deposit, discover, setPrice, unstake } from "web3/game";
+import { deposit, discover, setPrice, unstake } from "web3/game";
 
 type BoardModalProps = {
   onClose: () => void;
@@ -96,28 +97,28 @@ export default function BoardModal({
   const xCrop = (1 / 24) * (23 - (plot.id % 24)) * 100;
   const yCrop = (1 / 24) * (23 - Math.floor(plot.id / 24)) * 100;
 
-  const buyPlot = async () => {
-    const buyToast = toast.loading(`Buying plot ${plot.id}`);
-    if (!address || !provider) return;
-    // TODO: Feed from contract
-    const price = DISCOVER_FEE * 900 * 4;
-    try {
-      const tx = await buy(
-        provider,
-        address,
-        Number(plot.id),
-        toBigNumber(price, 18),
-      );
-      await tx.wait();
-      toast.success(`Buying plot ${plot.id}`, {
-        id: buyToast,
-      });
-    } catch (err) {
-      toast.error(`Error buying plot ${plot.id}`, {
-        id: buyToast,
-      });
-    }
-  };
+  // const buyPlot = async () => {
+  //   const buyToast = toast.loading(`Buying plot ${plot.id}`);
+  //   if (!address || !provider) return;
+  //   // TODO: Feed from contract
+  //   const price = DISCOVER_FEE * 900 * 4;
+  //   try {
+  //     const tx = await buy(
+  //       provider,
+  //       address,
+  //       Number(plot.id),
+  //       toBigNumber(price, 18),
+  //     );
+  //     await tx.wait();
+  //     toast.success(`Buying plot ${plot.id}`, {
+  //       id: buyToast,
+  //     });
+  //   } catch (err) {
+  //     toast.error(`Error buying plot ${plot.id}`, {
+  //       id: buyToast,
+  //     });
+  //   }
+  // };
 
   const depositInPlot = async () => {
     const depositToast = toast.loading(`Depositing in plot ${plot.id}`);
@@ -209,9 +210,14 @@ export default function BoardModal({
     undiscovered: [{ action: discoverPlot, text: "Discover" }],
   };
 
-  // console.log("XCROP: ", xCrop);
-  // console.log("YCROP: ", yCrop);
-  console.log("PLOT: ", plot);
+  // useEffect(() => {
+  //   if (!open) return;
+  //   (async () => {
+  //     if (!provider) return;
+  //     const plotData = await getPlot(provider, plot.id);
+  //   })();
+  // }, [open, plot, provider]);
+
   if (!open) return <></>;
   return (
     <ModalBody>

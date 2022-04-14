@@ -2,7 +2,7 @@ import Button from "components/Button";
 import StatDisplay from "components/StatDisplay";
 import React from "react";
 import styled from "styled-components";
-import { toBigNumber, truncateAddress } from "utils";
+import { truncateAddress } from "utils";
 
 const DUMMY_STATS = [
   { label: "Land Purchased", value: "540 of 900" },

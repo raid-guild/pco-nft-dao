@@ -64,7 +64,8 @@ const BoardRow = styled.div`
 
 const BoardSection = styled.div<PlotProps>`
   background-color: ${({ color }) => color};
-  border: 1px solid ${({ owner }) => (owner ? "#FFF94F" : "transparent")};
+
+  box-shadow: inset 0px 0px 0px 1px ${({ owner }) => (owner ? "#FFF94F" : "transparent")};
   cursor: pointer;
   height: 40px;
   opacity: ${({ selected }) => (selected ? 0 : 0.6)};

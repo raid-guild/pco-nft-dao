@@ -5,7 +5,7 @@ import Spinner from "components/Spinner";
 import StatDisplay from "components/StatDisplay";
 import { useWallet } from "contexts/WalletContext";
 import { Plots } from "graphql/queries";
-import background from "images/boardBackground.svg";
+import background from "images/picomap.png";
 import { useMemo, useState } from "react";
 import toast from "react-hot-toast";
 import styled from "styled-components";

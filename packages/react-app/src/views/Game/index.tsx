@@ -13,14 +13,13 @@ import { toBigNumber, truncateAddress } from "utils";
 import { DISCOVER_FEE } from "utils/constants";
 import { discover } from "web3/game";
 
-import { gridSectionColor } from "./helpers";
+import { plotColor } from "./helpers";
 import { Plot, PlotStatus } from "./types";
 
 const DUMMY_STATS = [
   { label: "Land Purchased", value: "540 of 900" },
   { label: "Average Price per NFT", value: "21.45 DAI" },
   { label: "Taxes Collected", value: "7823 DAI" },
-  { label: "Taxes Owing", value: "560 DAI" },
   { label: "DAO Shares Issued", value: "500" },
   { label: "Loot Issued", value: "4000" },
   { label: "Total Owners", value: "28" },
@@ -78,7 +77,6 @@ const BoardSection = styled.div<GameSectionProps>`
 const GameBoard = styled.div`
   background-image: url(${background});
   height: 960px;
-  position: relative;
   width: 960px;
 `;
 
@@ -152,7 +150,7 @@ export default function Game(): JSX.Element {
         return {
           id,
           // If plot is not in map then it has not been discovered
-          status: plot?.status.toLowerCase() ?? PlotStatus.Undiscoverd,
+          status: plot?.status.toLowerCase() ?? PlotStatus.Undiscovered,
         };
       }),
     );
@@ -179,7 +177,7 @@ export default function Game(): JSX.Element {
               <BoardRow key={rowIndex}>
                 {row.map(plot => (
                   <BoardSection
-                    color={gridSectionColor(plot.status as PlotStatus)}
+                    color={plotColor(plot.status as PlotStatus)}
                     key={plot.id}
                     onClick={() => setSelectedPlot(plot)}
                     selected={plot.id === selectedPlot?.id}

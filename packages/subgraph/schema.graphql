@@ -5,4 +5,5 @@ enum PlotStatus {
 type Plot @entity {
   id: ID!
   status: PlotStatus
+  owner: Bytes
 }

@@ -1,16 +1,20 @@
 import Button from "components/Button";
+import plotImage from "images/boardBackground.svg";
 import close from "images/close.svg";
 import { capitalize } from "lodash";
 import styled from "styled-components";
 import { Plot, PlotStatus } from "views/Game/types";
-
-// type ModalBodyProps = {};
 
 type BoardModalProps = {
   onClose: () => void;
   onSectionInteraction: () => void;
   open: boolean;
   sectionData: Plot;
+};
+
+type PlotImageProps = {
+  xCrop: number;
+  yCrop: number;
 };
 
 const ActionContainer = styled.div`
@@ -45,6 +49,11 @@ const ModalBody = styled.div`
   zindex: 100;
 `;
 
+const PlotImage = styled.img<PlotImageProps>`
+  clip-path: ${({ xCrop, yCrop }) => `inset(${xCrop}% ${xCrop}% ${yCrop}% 0)`};
+  margin-top: 24px;
+`;
+
 const Text = styled.div`
   color: rgba(45, 55, 72, 1);
   font-size: 12px;
@@ -59,6 +68,10 @@ export default function BoardModal({
   open,
   sectionData,
 }: BoardModalProps): JSX.Element {
+  const xCrop = (1 / 24) * (23 - (sectionData.id % 24)) * 100;
+  const yCrop = (1 / 24) * (23 - Math.floor(sectionData.id / 24)) * 100;
+  console.log("XCROP: ", xCrop);
+  console.log("YCROP: ", yCrop);
   if (!open) return <></>;
   return (
     <ModalBody>
@@ -67,10 +80,11 @@ export default function BoardModal({
         <div>
           <Text>Section ID: {sectionData.id}</Text>
           <Text>Status: {capitalize(sectionData.status)}</Text>
+          <PlotImage alt="Plot" src={plotImage} xCrop={xCrop} yCrop={yCrop} />
         </div>
       </Content>
       <ActionContainer>
-        {sectionData.status === PlotStatus.Undiscoverd && (
+        {sectionData.status === PlotStatus.Undiscovered && (
           <Button onChange={onSectionInteraction} text="Discover" />
         )}
       </ActionContainer>

@@ -6,5 +6,5 @@ export type Plot = {
 export enum PlotStatus {
   Forclosed = "forclosed",
   Owned = "owned",
-  Undiscoverd = "undiscovered",
+  Undiscovered = "undiscovered",
 }

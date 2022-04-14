@@ -19,6 +19,6 @@ dataSources:
         - name: HarbergerNft
           file: ./abis/HarbergerNft.json
       eventHandlers: 
-         - event: DiscoverFee(uint256,uint256,address)
+         - event: DiscoverFee(uint256,uint256,address,uint256)
            handler: handlePlotDiscovered
       file: ./src/mappings/HarbergerNft.ts

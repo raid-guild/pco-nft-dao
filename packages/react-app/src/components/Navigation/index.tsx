@@ -1,13 +1,12 @@
-import React from "react";
+import React, { Dispatch, SetStateAction } from "react";
 import styled from "styled-components";
-import { ReactComponent as Feather } from "../../assets/icons/feather_scribe.svg";
-import { ReactComponent as FireLamp } from "../../assets/icons/fire_lamp.svg";
 
 import RaidLogo from "../../assets/images/raidguild__logo.png";
+import { AiOutlineMenu } from "react-icons/ai";
 
 const Header = styled.header`
   height: 5rem;
-  padding: 1rem 2.5rem;
+  padding: 0 4rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -19,22 +18,32 @@ const Logo = styled.img`
   object-fit: cover;
 `;
 
-const Navigation: React.FC = () => {
+const Menu = styled.div`
+  cursor: pointer;
+  color: red;
+  display: block;
+  margin-left: auto;
+  user-select: none;
+`;
+
+type Props = {
+  isNavbarVisable: boolean;
+  setIsNavbarVisable: Dispatch<SetStateAction<boolean>>;
+};
+
+const Navigation: React.FC<Props> = props => {
   return (
     <Header>
       <a
-        href="https://app.daohaus.club/dao/0x4/0x30C4734A367EdF13e7e1E6BEE734325174d562b5"
+        href="https://app.daohaus.club/dao/0x4/0x60fa6ff012ed0f05ec0196cfc114bb4ea8b22bea/members"
         target="_blank"
         rel="noreferrer"
       >
         <Logo src={RaidLogo} alt="" />
       </a>
-      <FireLamp
-        height={60}
-        onClick={() => {
-          console.log("Click");
-        }}
-      />
+      <Menu onClick={() => props.setIsNavbarVisable(true)}>
+        <AiOutlineMenu size={32} />
+      </Menu>
     </Header>
   );
 };

@@ -1,13 +1,22 @@
+import React, { useState } from "react";
 import { Toaster } from "react-hot-toast";
 import Game from "views/Game";
 
 import Layout from "./components/Layout";
 
 function App(): JSX.Element {
+  const [isNavbarVisable, setIsNavbarVisable] = useState<boolean>(true);
+
   return (
-    <Layout>
+    <Layout
+      isNavbarVisable={isNavbarVisable}
+      setIsNavbarVisable={setIsNavbarVisable}
+    >
       <Toaster position="top-left" />
-      <Game />
+      <Game
+        isNavbarVisable={isNavbarVisable}
+        setIsNavbarVisable={setIsNavbarVisable}
+      />
     </Layout>
   );
 }

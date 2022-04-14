@@ -6,7 +6,7 @@ import StatDisplay from "components/StatDisplay";
 import { useWallet } from "contexts/WalletContext";
 import { Plots } from "graphql/queries";
 import background from "images/boardBackground.svg";
-import { useMemo, useState } from "react";
+import { Dispatch, SetStateAction, useMemo, useState } from "react";
 import toast from "react-hot-toast";
 import styled from "styled-components";
 import { toBigNumber, truncateAddress } from "utils";
@@ -16,6 +16,7 @@ import { discover } from "web3/game";
 import BirdLogo from "../../assets/images/pico_logo.png";
 import { gridSectionColor } from "./helpers";
 import { Plot, PlotStatus } from "./types";
+import close from "images/close.svg";
 
 const DUMMY_STATS = [
   { label: "Land Purchased", value: "540 of 900" },
@@ -138,6 +139,15 @@ const GameContainerInner = styled.div`
   }
 `;
 
+const Close = styled.img`
+  cursor: pointer;
+  display: block;
+  height: 24px;
+  margin-right: auto;
+  user-select: none;
+  width: 24px;
+`;
+
 type StatBarProps = {
   isNavbarVisable: boolean;
 };
@@ -163,7 +173,12 @@ const Pico = styled.div`
   align-self: center;
 `;
 
-export default function Game(): JSX.Element {
+type Props = {
+  isNavbarVisable: boolean;
+  setIsNavbarVisable: Dispatch<SetStateAction<boolean>>;
+};
+
+export default function Game(props: Props): JSX.Element {
   const {
     address,
     connectWallet,
@@ -173,7 +188,6 @@ export default function Game(): JSX.Element {
     provider,
   } = useWallet();
   const [selectedPlot, setSelectedPlot] = useState<Plot | null>(null);
-  const [isNavbarVisable, setIsNavbarVisable] = useState<boolean>(true);
 
   const { data: plotData, error, loading: loadingPlots } = useQuery(Plots);
 
@@ -270,7 +284,12 @@ export default function Game(): JSX.Element {
           </GameBoard>
         </GameContainerInner>
       </GameContainer>
-      <StatBar isNavbarVisable={isNavbarVisable}>
+      <StatBar isNavbarVisable={props.isNavbarVisable}>
+        <Close
+          alt="Close"
+          onClick={() => props.setIsNavbarVisable(false)}
+          src={close}
+        />
         {DUMMY_STATS.map(stat => (
           <StatDisplay key={stat.label} label={stat.label} value={stat.value} />
         ))}

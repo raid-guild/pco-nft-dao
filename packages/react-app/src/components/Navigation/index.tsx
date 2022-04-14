@@ -1,12 +1,13 @@
 import React from "react";
 import styled from "styled-components";
+import { ReactComponent as Feather } from "../../assets/icons/feather_scribe.svg";
+import { ReactComponent as FireLamp } from "../../assets/icons/fire_lamp.svg";
 
-import { ReactComponent as RaidGuildLogo } from "../../images/rg-logo.svg";
 import RaidLogo from "../../assets/images/raidguild__logo.png";
 
 const Header = styled.header`
   height: 5rem;
-  padding: 0 2rem;
+  padding: 1rem 2.5rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -14,8 +15,7 @@ const Header = styled.header`
 `;
 
 const Logo = styled.img`
-  fill: #ff3864;
-  height: 2rem;
+  height: 2.5rem;
   object-fit: cover;
 `;
 
@@ -29,8 +29,12 @@ const Navigation: React.FC = () => {
       >
         <Logo src={RaidLogo} alt="" />
       </a>
-
-      <h1>X</h1>
+      <FireLamp
+        height={60}
+        onClick={() => {
+          console.log("Click");
+        }}
+      />
     </Header>
   );
 };

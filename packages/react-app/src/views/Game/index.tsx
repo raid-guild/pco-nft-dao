@@ -13,6 +13,7 @@ import { toBigNumber, truncateAddress } from "utils";
 import { DISCOVER_FEE } from "utils/constants";
 import { discover } from "web3/game";
 
+import BirdLogo from "../../assets/images/pico_logo.png";
 import { gridSectionColor } from "./helpers";
 import { Plot, PlotStatus } from "./types";
 
@@ -153,8 +154,13 @@ const StatBar = styled.div<StatBarProps>`
   padding: 0;
   flex-shrink: 0;
   gap: 14px;
-  padding: 5rem 24px;
+  padding: 2.5rem 24px;
   transition: 850ms;
+`;
+
+const Pico = styled.div`
+  padding-top: 20px;
+  align-self: center;
 `;
 
 export default function Game(): JSX.Element {
@@ -283,6 +289,9 @@ export default function Game(): JSX.Element {
           }
         />
         {address && <Address>Address: {truncateAddress(address)}</Address>}
+        <Pico>
+          <img src={BirdLogo} alt="" />
+        </Pico>
       </StatBar>
     </>
   );

@@ -166,6 +166,19 @@
       "type": "function"
     },
     {
+      "inputs": [
+        { "internalType": "address", "name": "_to", "type": "address" },
+        { "internalType": "uint256", "name": "_plotId", "type": "uint256" },
+        { "internalType": "uint256", "name": "_price", "type": "uint256" },
+        { "internalType": "uint256", "name": "_periods", "type": "uint256" },
+        { "internalType": "uint256", "name": "_amount", "type": "uint256" }
+      ],
+      "name": "buyAndDeposit",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
       "inputs": [],
       "name": "cap",
       "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
@@ -347,6 +360,7 @@
         { "internalType": "uint256", "name": "stake", "type": "uint256" },
         { "internalType": "uint256", "name": "foreclosePeriod", "type": "uint256" },
         { "internalType": "uint256", "name": "lastCollectionPeriod", "type": "uint256" },
+        { "internalType": "uint256", "name": "discoverPeriod", "type": "uint256" },
         { "internalType": "uint256", "name": "price", "type": "uint256" },
         { "internalType": "uint24", "name": "color", "type": "uint24" }
       ],
@@ -367,6 +381,19 @@
         { "internalType": "uint256", "name": "_amount", "type": "uint256" }
       ],
       "name": "reclaim",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        { "internalType": "address", "name": "_to", "type": "address" },
+        { "internalType": "uint256", "name": "_plotId", "type": "uint256" },
+        { "internalType": "uint256", "name": "_price", "type": "uint256" },
+        { "internalType": "uint256", "name": "_periods", "type": "uint256" },
+        { "internalType": "uint256", "name": "_amount", "type": "uint256" }
+      ],
+      "name": "reclaimAndDeposit",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"

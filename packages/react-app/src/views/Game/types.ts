@@ -1,5 +1,7 @@
 export type Plot = {
   id: number;
+  owner?: string;
+  staked: number;
   status: PlotStatus;
 };
 

@@ -24,8 +24,10 @@ const DUMMY_STATS = [
   { label: "Tax Rate", value: "3%" },
 ];
 
-type GameSectionProps = {
+type PlotProps = {
   color: string;
+  discovered: boolean;
+  owner: boolean;
   selected: boolean;
 };
 
@@ -60,8 +62,9 @@ const BoardRow = styled.div`
   display: flex;
 `;
 
-const BoardSection = styled.div<GameSectionProps>`
+const BoardSection = styled.div<PlotProps>`
   background-color: ${({ color }) => color};
+  border: 1px solid ${({ owner }) => (owner ? "#FFF94F" : "transparent")};
   cursor: pointer;
   height: 40px;
   opacity: ${({ selected }) => (selected ? 0 : 0.6)};
@@ -174,7 +177,10 @@ export default function Game(): JSX.Element {
   const plots = useMemo(() => {
     if (!plotData) return [];
     const plotMap = Object.fromEntries(
-      plotData.plots.map((plot: Plot) => [plot.id, { status: plot.status }]),
+      plotData.plots.map((plot: Plot) => [
+        plot.id,
+        { owner: plot.owner, staked: plot.staked, status: plot.status },
+      ]),
     );
     return new Array(24).fill(0).map((_, row) =>
       new Array(24).fill(0).map((_, col) => {
@@ -182,7 +188,8 @@ export default function Game(): JSX.Element {
         const plot = plotMap[id];
         return {
           id,
-          // If plot is not in map then it has not been discovered
+          owner: plot?.owner,
+          staked: plot?.staked ?? 0,
           status: plot?.status.toLowerCase() ?? PlotStatus.Undiscovered,
         };
       }),
@@ -211,8 +218,10 @@ export default function Game(): JSX.Element {
                 {row.map(plot => (
                   <BoardSection
                     color={plotColor(plot.status as PlotStatus)}
+                    discovered={plot.status !== PlotStatus.Undiscovered}
                     key={plot.id}
                     onClick={() => setSelectedPlot(plot)}
+                    owner={address ? address === plot.owner : false}
                     selected={plot.id === selectedPlot?.id}
                   />
                 ))}

@@ -6,7 +6,7 @@ dataSources:
     name: HarbergerNft
     network: rinkeby
     source: 
-      address: '0xa1193c82e5a38abc1826e4c6182070cc5916c1be'
+      address: '0x033b8b0ea6f69b4a6d80c64e0d17f1ca6e3c85ba'
       abi: HarbergerNft
       startBlock: 10501017
     mapping: 
@@ -19,6 +19,14 @@ dataSources:
         - name: HarbergerNft
           file: ./abis/HarbergerNft.json
       eventHandlers: 
+         - event: AddStake(uint256,uint256,uint256)
+           handler: handleDeposit
+         - event: Buy(uint256,uint256,uint256)
+           handler: handleBuy
          - event: DiscoverFee(uint256,uint256,address,uint256)
-           handler: handlePlotDiscovered
+           handler: handleDiscover
+         - event: SetPrice(uint256,uint256)
+           handler: handlePriceSet
+         - event: Unstake(uint256,uint256,uint256)
+           handler: handleUnstake
       file: ./src/mappings/HarbergerNft.ts

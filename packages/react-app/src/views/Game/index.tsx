@@ -83,17 +83,78 @@ const GameBoard = styled.div`
 `;
 
 const GameContainer = styled.div`
-  display: flex;
+  position: relative;
+  width: 100%;
+  max-width: 996px;
+  padding: 5px;
+  border: 2px solid #ff3864;
+  &:before,
+  &:after {
+    content: "•";
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    font-size: 14px;
+    color: #b78846;
+    border: 2px solid #ff3864;
+    line-height: 12px;
+    top: 5px;
+    text-align: center;
+  }
+  &:before {
+    left: 5px;
+  }
+  &:after {
+    right: 5px;
+  }
 `;
 
-const StatBar = styled.div`
-  background: #b9b9b9;
+const GameContainerInner = styled.div`
+  position: relative;
   display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 2px solid #ff3864;
+  padding: 16px;
+  &:before,
+  &:after {
+    content: "•";
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    font-size: 14px;
+    color: #b78846;
+    border: 2px solid #ff3864;
+    line-height: 12px;
+    bottom: -2px;
+    text-align: center;
+  }
+  &:before {
+    left: -2px;
+  }
+  &:after {
+    right: -2px;
+  }
+`;
+
+type StatBarProps = {
+  isNavbarVisable: boolean;
+};
+
+const StatBar = styled.div<StatBarProps>`
+  background: #b9b9b9;
+  width: 260px;
+  height: 100vh;
+  display: flex;
+  position: fixed;
   flex-direction: column;
+  top: 0;
+  right: ${props => (props.isNavbarVisable ? "0" : "-100%")};
+  padding: 0;
   flex-shrink: 0;
-  gap: 10px;
-  padding-inline: 24px;
-  width: 360px;
+  gap: 14px;
+  padding: 5rem 24px;
+  transition: 850ms;
 `;
 
 export default function Game(): JSX.Element {
@@ -106,6 +167,7 @@ export default function Game(): JSX.Element {
     provider,
   } = useWallet();
   const [selectedPlot, setSelectedPlot] = useState<Plot | null>(null);
+  const [isNavbarVisable, setIsNavbarVisable] = useState<boolean>(true);
 
   const { data: plotData, error, loading: loadingPlots } = useQuery(Plots);
 
@@ -152,50 +214,57 @@ export default function Game(): JSX.Element {
   }, [plotData]);
 
   return (
-    <GameContainer>
-      <GameBoard>
-        {error && (
-          <BoardOverlay>
-            <BoardTextContainer>Error fetching game state.</BoardTextContainer>
-          </BoardOverlay>
-        )}
-        {loadingPlots ? (
-          <BoardOverlay>
-            <BoardTextContainer>
-              <>Fetching game state...</>
-              <Spinner color="#ffffff" height={50} width={50} />
-            </BoardTextContainer>
-          </BoardOverlay>
-        ) : (
-          <>
-            {new Array(24).fill(0).map((_, rowIndex) => (
-              <BoardRow key={rowIndex}>
-                {new Array(24).fill(0).map((_, colIndex) => {
-                  const id = plotId(rowIndex, colIndex);
-                  const plot = plotMap[id];
-                  // If plot is not in map then it has not been discovered
-                  const status = plot?.status.toLowerCase() ?? "undiscovered";
-                  return (
-                    <BoardSection
-                      color={gridSectionColor(status as PlotStatus)}
-                      key={colIndex}
-                      onClick={() => handlePlotSelect(id)}
-                      selected={id === selectedPlot?.id}
-                    />
-                  );
-                })}
-              </BoardRow>
-            ))}
-          </>
-        )}
-        <BoardModal
-          onClose={() => setSelectedPlot(null)}
-          onSectionInteraction={() => handlePlotInteraction()}
-          open={!!selectedPlot}
-          sectionData={selectedPlot ?? ({} as Plot)}
-        />
-      </GameBoard>
-      <StatBar>
+    <>
+      <GameContainer>
+        <GameContainerInner>
+          <GameBoard>
+            {error && (
+              <BoardOverlay>
+                <BoardTextContainer>
+                  Error fetching game state.
+                </BoardTextContainer>
+              </BoardOverlay>
+            )}
+            {loadingPlots ? (
+              <BoardOverlay>
+                <BoardTextContainer>
+                  <>Fetching game state...</>
+                  <Spinner color="#ffffff" height={50} width={50} />
+                </BoardTextContainer>
+              </BoardOverlay>
+            ) : (
+              <>
+                {new Array(24).fill(0).map((_, rowIndex) => (
+                  <BoardRow key={rowIndex}>
+                    {new Array(24).fill(0).map((_, colIndex) => {
+                      const id = plotId(rowIndex, colIndex);
+                      const plot = plotMap[id];
+                      // If plot is not in map then it has not been discovered
+                      const status =
+                        plot?.status.toLowerCase() ?? "undiscovered";
+                      return (
+                        <BoardSection
+                          color={gridSectionColor(status as PlotStatus)}
+                          key={colIndex}
+                          onClick={() => handlePlotSelect(id)}
+                          selected={id === selectedPlot?.id}
+                        />
+                      );
+                    })}
+                  </BoardRow>
+                ))}
+              </>
+            )}
+            <BoardModal
+              onClose={() => setSelectedPlot(null)}
+              onSectionInteraction={() => handlePlotInteraction()}
+              open={!!selectedPlot}
+              sectionData={selectedPlot ?? ({} as Plot)}
+            />
+          </GameBoard>
+        </GameContainerInner>
+      </GameContainer>
+      <StatBar isNavbarVisable={isNavbarVisable}>
         {DUMMY_STATS.map(stat => (
           <StatDisplay key={stat.label} label={stat.label} value={stat.value} />
         ))}
@@ -215,6 +284,6 @@ export default function Game(): JSX.Element {
         />
         {address && <Address>Address: {truncateAddress(address)}</Address>}
       </StatBar>
-    </GameContainer>
+    </>
   );
 }

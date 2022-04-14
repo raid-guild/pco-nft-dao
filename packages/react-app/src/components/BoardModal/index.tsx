@@ -36,6 +36,9 @@ const Close = styled.img`
 const ModalBody = styled.div`
   background-color: #c4c4c4;
   border-radius: 8px;
+  box-shadow: 10px 10px 14px 3px rgba(255, 255, 255, 0.5);
+  z-index: 30;
+  animation: slide-down 300ms ease-out forwards;
   height: 300px;
   left: 40px;
   padding: 16px;
@@ -43,6 +46,17 @@ const ModalBody = styled.div`
   top: 40px;
   width: 500px;
   zindex: 100;
+
+  @keyframes slide-down {
+    from {
+      opacity: 0;
+      transform: translateY(-3rem);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
 `;
 
 const Text = styled.div`

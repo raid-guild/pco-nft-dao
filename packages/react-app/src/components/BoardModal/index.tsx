@@ -1,7 +1,7 @@
 import Button from "components/Button";
 import StatDisplay from "components/StatDisplay";
 import { useWallet } from "contexts/WalletContext";
-import plotImage from "images/boardBackground.svg";
+import plotImage from "images/picomap.jpg";
 import close from "images/close.svg";
 import { capitalize } from "lodash";
 // mport { useEffect } from "react";

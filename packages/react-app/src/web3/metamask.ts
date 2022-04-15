@@ -29,6 +29,8 @@ export const switchChainOnMetaMask = async (
     return true;
   } catch (switchError) {
     // This error code indicates that the chain has not been added to MetaMask.
+    // TODO: add type for any
+    /* eslint-disable @typescript-eslint/no-explicit-any */
     if ((switchError as any).code === 4902) {
       try {
         await window.ethereum.request({

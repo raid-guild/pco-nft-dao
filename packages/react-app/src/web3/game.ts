@@ -13,9 +13,7 @@ const plotReturn = [
   "uint24",
 ];
 
-const uriReturn = [
-  "string",
-];
+const uriReturn = ["string"];
 
 const checkHarberAllowance = async (
   provider: providers.Web3Provider,

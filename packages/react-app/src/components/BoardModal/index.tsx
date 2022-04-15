@@ -1,9 +1,10 @@
 import Button from "components/Button";
 import StatDisplay from "components/StatDisplay";
 import { useWallet } from "contexts/WalletContext";
-import plotImage from "images/picomap.jpg";
 import close from "images/close.svg";
+import plotImage from "images/picomap.jpg";
 import { capitalize } from "lodash";
+import { useEffect, useState } from "react";
 // mport { useEffect } from "react";
 import toast from "react-hot-toast";
 import styled from "styled-components";
@@ -18,7 +19,6 @@ import {
   setPrice,
   unstake,
 } from "web3/game";
-import { useEffect, useState } from "react";
 
 type BoardModalProps = {
   onClose: () => void;
@@ -105,6 +105,7 @@ export default function BoardModal({
   const xCrop = (1 / 24) * (23 - (plot.id % 24)) * 100;
   const yCrop = (1 / 24) * (23 - Math.floor(plot.id / 24)) * 100;
   const [tile, setTile] = useState<string>("");
+  // const [plotdata, setPlotData] = useState<PlotData>({});
 
   // const buyPlot = async () => {
   //   const buyToast = toast.loading(`Buying plot ${plot.id}`);
@@ -209,6 +210,8 @@ export default function BoardModal({
     }
   };
 
+  // TODO: add type for any
+  /* eslint-disable @typescript-eslint/no-explicit-any */
   const plotInteractions: { [key in PlotStatus]: any[] } = {
     forclosed: [{ action: depositInPlot, text: "Deposit" }],
     owned: [
@@ -229,6 +232,7 @@ export default function BoardModal({
         const uriData = await getTokenURI(provider, plot.id);
         const jsonString = atob(uriData.toString().split(";base64,")[1]);
         const parseJson = JSON.parse(jsonString);
+        console.log("plotData", plotData);
         console.log("image", parseJson.image);
 
         setTile(parseJson.image);
@@ -248,6 +252,7 @@ export default function BoardModal({
         <div>
           <Text>Section ID: {plot.id}</Text>
           <Text>Status: {capitalize(plot.status)}</Text>
+          {/* this probably needs to be a embed */}
           <PlotImage
             alt="Plot"
             src={tile || plotImage}

@@ -147,7 +147,7 @@ export const WalletProvider: React.FC<{
       setWalletState({
         provider: ethersProvider,
         chainId,
-        address: signerAddress,
+        address: signerAddress.toLowerCase(),
       });
     },
     [defaultChainId, handleModalEvents, networks],

@@ -1,7 +1,7 @@
 import { BigNumber, utils } from "ethers";
 
 export const toBigNumber = (amount: number, decimals: number): BigNumber => {
-  return utils.parseUnits(amount.toString(), 18);
+  return utils.parseUnits(amount.toString(), decimals);
 };
 
 export const truncateAddress = (address: string): string => {

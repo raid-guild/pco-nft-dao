@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Dispatch, SetStateAction } from "react";
 import styled from "styled-components";
 
 import Navigation from "../Navigation";
@@ -10,10 +10,18 @@ const Main = styled.main`
   width: 100vw;
 `;
 
-const Layout: React.FC = props => {
+type Props = {
+  isNavbarVisable: boolean;
+  setIsNavbarVisable: Dispatch<SetStateAction<boolean>>;
+};
+
+const Layout: React.FC<Props> = props => {
   return (
     <React.Fragment>
-      <Navigation />
+      <Navigation
+        isNavbarVisable={props.isNavbarVisable}
+        setIsNavbarVisable={props.setIsNavbarVisable}
+      />
       <Main>{props.children}</Main>
     </React.Fragment>
   );

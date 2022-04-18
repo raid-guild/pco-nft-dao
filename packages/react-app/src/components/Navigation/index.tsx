@@ -1,11 +1,12 @@
-import { ReactComponent as FireLamp } from "assets/icons/fire_lamp.svg";
-import RaidLogo from "assets/images/raidguild__logo.png";
-import React from "react";
+import React, { Dispatch, SetStateAction } from "react";
 import styled from "styled-components";
+
+import { AiOutlineMenu } from "react-icons/ai";
+import RaidLogo from "assets/images/raidguild__logo.png";
 
 const Header = styled.header`
   height: 5rem;
-  padding: 1rem 2.5rem;
+  padding: 0 4rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -17,7 +18,20 @@ const Logo = styled.img`
   object-fit: cover;
 `;
 
-const Navigation: React.FC = () => {
+const Menu = styled.div`
+  cursor: pointer;
+  color: red;
+  display: block;
+  margin-left: auto;
+  user-select: none;
+`;
+
+type Props = {
+  isNavbarVisable: boolean;
+  setIsNavbarVisable: Dispatch<SetStateAction<boolean>>;
+};
+
+const Navigation: React.FC<Props> = props => {
   return (
     <Header>
       <a
@@ -27,12 +41,9 @@ const Navigation: React.FC = () => {
       >
         <Logo src={RaidLogo} alt="" />
       </a>
-      <FireLamp
-        height={60}
-        onClick={() => {
-          console.log("Click");
-        }}
-      />
+      <Menu onClick={() => props.setIsNavbarVisable(true)}>
+        <AiOutlineMenu size={32} />
+      </Menu>
     </Header>
   );
 };

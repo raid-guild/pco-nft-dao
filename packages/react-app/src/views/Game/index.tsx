@@ -6,15 +6,15 @@ import Spinner from "components/Spinner";
 import StatDisplay from "components/StatDisplay";
 import { useWallet } from "contexts/WalletContext";
 import { Plots } from "graphql/queries";
+import close from "images/close.svg";
+import background from "images/picomap.jpg";
 import { Dispatch, SetStateAction, useMemo, useState } from "react";
 import toast from "react-hot-toast";
-import background from "images/picomap.jpg";
 import styled from "styled-components";
 import { truncateAddress } from "utils";
 
 import { plotColor } from "./helpers";
 import { Plot, PlotStatus } from "./types";
-import close from "images/close.svg";
 
 const DUMMY_STATS = [
   { label: "Land Purchased", value: "540 of 900" },
@@ -52,7 +52,7 @@ const BoardOverlay = styled.div`
 
 const BoardTextContainer = styled.div`
   align-items: center;
-  color: #ffffff;
+  color: #ff3864;
   display: flex;
   flex-direction: column;
   font-size: 30px;
@@ -106,9 +106,11 @@ const GameContainer = styled.div`
   }
   &:before {
     left: 5px;
+    z-index: -1;
   }
   &:after {
     right: 5px;
+    z-index: -1;
   }
 `;
 
@@ -225,7 +227,7 @@ export default function Game(props: Props): JSX.Element {
           <BoardOverlay>
             <BoardTextContainer>
               <>Fetching game state...</>
-              <Spinner color="#ffffff" height={50} width={50} />
+              <Spinner height={50} width={50} />
             </BoardTextContainer>
           </BoardOverlay>
         ) : (

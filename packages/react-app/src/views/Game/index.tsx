@@ -9,7 +9,6 @@ import { Plots } from "graphql/queries";
 import close from "images/close.svg";
 import background from "images/picomap.jpg";
 import { Dispatch, SetStateAction, useMemo, useState } from "react";
-import toast from "react-hot-toast";
 import styled from "styled-components";
 import { truncateAddress } from "utils";
 
@@ -168,7 +167,7 @@ const StatBar = styled.div<StatBarProps>`
   flex-shrink: 0;
   gap: 14px;
   padding: 2.5rem 24px;
-  transition: 850ms;
+  transition: 0.5s right;
   zindex: 100;
 `;
 

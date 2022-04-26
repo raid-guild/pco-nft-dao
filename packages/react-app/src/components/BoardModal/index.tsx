@@ -4,7 +4,7 @@ import { useWallet } from "contexts/WalletContext";
 import close from "images/close.svg";
 import plotImage from "images/picomap.jpg";
 import { capitalize } from "lodash";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 // mport { useEffect } from "react";
 import toast from "react-hot-toast";
 import styled from "styled-components";
@@ -26,9 +26,11 @@ type BoardModalProps = {
   plot: Plot;
 };
 
-type PlotImageProps = {
-  xCrop: number;
-  yCrop: number;
+type ImageProps = {
+  height: number;
+  width: number;
+  xShift: number;
+  yShift: number;
 };
 
 const ActionContainer = styled.div`
@@ -52,6 +54,20 @@ const Close = styled.img`
   margin-left: auto;
   user-select: none;
   width: 24px;
+`;
+
+const Image = styled.img<ImageProps>`
+  height: ${({ height }: { height: number }) => `${height}px`};
+  left: ${({ xShift }: { xShift: number }) => `${xShift}px`};
+  position: relative;
+  top: ${({ yShift }: { yShift: number }) => `${yShift}px`};
+  width: ${({ width }: { width: number }) => `${width}px`};
+`;
+
+const ImageContainer = styled.div`
+  height: 150px;
+  overflow: hidden;
+  width: 150px;
 `;
 
 const ModalBody = styled.div`
@@ -80,13 +96,13 @@ const ModalBody = styled.div`
   }
 `;
 
-const PlotImage = styled.img<PlotImageProps>`
-  // clip-path: ${({ xCrop, yCrop }) =>
-    `inset(${xCrop}% ${xCrop}% ${yCrop}% 0)`};
-  height: 150px;
-  margin-top: 12px;
-  width: 150px;
-`;
+// const PlotImage = styled.img<PlotImageProps>`
+//   // clip-path: ${({ xCrop, yCrop }) =>
+//     `inset(${xCrop}% ${xCrop}% ${yCrop}% 0)`};
+//   height: 150px;
+//   margin-top: 12px;
+//   width: 150px;
+// `;
 
 const Text = styled.div`
   color: rgba(45, 55, 72, 1);
@@ -102,9 +118,7 @@ export default function BoardModal({
   plot,
 }: BoardModalProps): JSX.Element {
   const { address, provider } = useWallet();
-  const xCrop = (1 / 24) * (23 - (plot.id % 24)) * 100;
-  const yCrop = (1 / 24) * (23 - Math.floor(plot.id / 24)) * 100;
-  const [tile, setTile] = useState<string>("");
+  const [, setTile] = useState<string>("");
   // const [plotdata, setPlotData] = useState<PlotData>({});
 
   // const buyPlot = async () => {
@@ -129,6 +143,19 @@ export default function BoardModal({
   //     });
   //   }
   // };
+
+  const imageEdit = useMemo(() => {
+    // Amount to scale image based on set width
+    if (plot.id === undefined)
+      return { height: 0, width: 0, xShift: 0, yShift: 0 };
+    const plotWidth = 40;
+    const imageScale = 150 / plotWidth;
+    const height = 960 * imageScale;
+    const width = 960 * imageScale;
+    const xShift = (plot.id % 24) * imageScale * plotWidth * -1;
+    const yShift = Math.floor(plot.id / 24) * imageScale * plotWidth * -1;
+    return { height, width, xShift, yShift };
+  }, [plot]);
 
   const depositInPlot = async () => {
     const depositToast = toast.loading(`Depositing in plot ${plot.id}`);
@@ -252,13 +279,22 @@ export default function BoardModal({
         <div>
           <Text>Section ID: {plot.id}</Text>
           <Text>Status: {capitalize(plot.status)}</Text>
-          {/* this probably needs to be a embed */}
-          <PlotImage
+          <ImageContainer>
+            <Image
+              alt="Map Section"
+              height={imageEdit.height}
+              src={plotImage}
+              width={imageEdit.width}
+              xShift={imageEdit.xShift}
+              yShift={imageEdit.yShift}
+            />
+          </ImageContainer>
+          {/* <PlotImage
             alt="Plot"
             src={tile || plotImage}
             xCrop={xCrop}
             yCrop={yCrop}
-          />
+          /> */}
         </div>
         {plot.status !== PlotStatus.Undiscovered && (
           <div>

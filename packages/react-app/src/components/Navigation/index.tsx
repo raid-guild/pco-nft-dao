@@ -1,8 +1,7 @@
-import React, { Dispatch, SetStateAction } from "react";
-import styled from "styled-components";
-
-import { AiOutlineMenu } from "react-icons/ai";
 import RaidLogo from "assets/images/raidguild__logo.png";
+import React, { Dispatch, SetStateAction } from "react";
+import { AiOutlineMenu } from "react-icons/ai";
+import styled from "styled-components";
 
 const Header = styled.header`
   height: 5rem;

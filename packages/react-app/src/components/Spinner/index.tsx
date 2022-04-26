@@ -29,8 +29,8 @@ const SpinnerContainer = styled.div<SpinnerProps>`
 
 const SpinnerInner = styled.div<SpinnerProps>`
   animation: ${spinAnimation} 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
-  border: 1px solid ${({ color }) => color ?? "#ffffff"};
-  border-color: ${({ color }) => color ?? "#ffffff"} transparent transparent
+  border: 1px solid ${({ color }) => color ?? "#FF3864"};
+  border-color: ${({ color }) => color ?? "#FF3864"} transparent transparent
     transparent;
   border-radius: 50%;
   box-sizing: border-box;
